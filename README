@@ -1,0 +1,109 @@
+# 🌐 Digital Signage Management System
+
+A cloud-connected digital signage platform for managing content across multiple displays. Designed for scalability, flexibility, and compatibility with both smart TVs and non-smart displays powered by Raspberry Pi.
+
+---
+
+## 🧠 Big Picture
+
+This system integrates **five major components**:
+
+1. **Frontend:** A simple web interface to:
+   - Upload new media.
+   - Register new displays.
+   - Configure display settings.
+
+2. **Backend (Cloud API):** FastAPI-powered server handling:
+   - Media uploads and metadata.
+   - Display registration and authentication.
+   - Media-display associations.
+   - Periodic status checks from connected displays.
+
+3. **File Storage:** Media files are stored in the cloud (e.g., S3, local disk, etc.), and the database references them via URLs.
+
+4. **Database:** Stores:
+   - Display records (with API keys).
+   - Uploaded media (with type and configuration metadata).
+   - Media-display mapping.
+
+5. **Displays (Smart TVs or Raspberry Pi):** Devices:
+   - Periodically ping the server for media updates.
+   - Download and play content based on their assigned media.
+   - Authenticate via device-specific API keys.
+
+---
+
+## 🔧 Tech Stack
+
+| Layer         | Technology              |
+|--------------|--------------------------|
+| Frontend     | HTML (expandable to React/Vue later) |
+| Backend API  | FastAPI (Python)         |
+| File Storage | Cloud/local file system  |
+| Database     | SQLite / PostgreSQL      |
+| Display Agent| Python client (Raspberry Pi support) |
+| Services     | systemd (for auto-start on boot)     |
+
+---
+
+## 🗂️ Repo Structure
+├── .venv/                       # Python virtual environment
+├── backend/
+│   └── app/
+│       ├── pycache/        # Bytecode cache
+│       ├── storage/            # (Planned) Media storage utilities
+│       ├── db.py               # DB models and connection
+│       ├── main.py             # FastAPI app entry point
+│       ├── models.py           # Pydantic models (schemas)
+│       ├── router.py           # API route handlers
+│       └── test.py             # Basic testing and endpoints
+├── firmware/
+│   ├── client.py               # Script running on display (e.g. Raspberry Pi)
+│   ├── config.json             # Device config (API key, display ID)
+│   ├── digital-signage.service# systemd service for auto-start
+│   └── reboot-slideshow-instructions.txt # Setup instructions
+├── frontend/
+│   └── index.html              # UI for uploading media and registering displays
+
+---
+
+## 🔌 Planned APIs
+
+1. **POST /media** – Upload and configure media (image, video, carousel, etc.)
+2. **POST /displays** – Register a new display (auth key generated)
+3. **GET /status/{display_id}** – Display checks if there's new media assigned
+4. **GET /media/{media_id}** – Display downloads assigned media file
+
+Each display is authenticated using its API key. Users on the frontend will also have authorization to protect admin routes.
+
+---
+
+## 🛠️ To-Do / Future Improvements
+
+- Add authentication for frontend users.
+- Extend frontend to support media previews and scheduling.
+- Expand media types (carousel, playlist support).
+- Support cloud file storage (e.g., AWS S3 or Firebase).
+- WebSocket or MQTT integration for real-time updates to displays.
+
+---
+
+## 📦 Getting Started (Development)
+
+```bash
+# Clone the repo
+git clone https://github.com/firasnazar2004/digital-signage-system.git
+
+# Backend setup
+cd backend
+python3 -m venv ../.venv
+source ../.venv/bin/activate
+pip install -r requirements.txt
+uvicorn app.main:app --reload
+
+# Frontend
+Open frontend/index.html in your browser
+
+# Firmware (on Raspberry Pi or other)
+cd firmware
+sudo systemctl --user start digital-signage.service
