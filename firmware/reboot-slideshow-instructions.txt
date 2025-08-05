@@ -1,0 +1,50 @@
+✅ General Guide: Using systemd User Service to Autostart GUI or Python Scripts on Boot
+
+This method creates a systemd user-level service to run scripts (e.g., GUI apps or Python programs) at boot. It avoids common display or permission issues by tying the service to the user session.
+
+NOTE: Make sure to add a time.sleep(10) to allow the Raspberry Pi to boot normally and connect to the wifi before starting the slideshow
+⸻
+
+	1.	Create a user systemd service file:
+
+mkdir -p ~/.config/systemd/user
+nano ~/.config/systemd/user/my-service.service
+
+	2.	Paste the following into the service file:
+
+[Unit]
+Description=My Autostart Script
+After=graphical.target
+
+[Service]
+ExecStart=/full/path/to/your/script.py
+WorkingDirectory=/full/path/to/working/directory
+Environment=DISPLAY=:0
+Restart=always
+
+[Install]
+WantedBy=default.target
+
+	3.	(Optional) Use a virtual environment or specify interpreter in ExecStart if needed:
+
+ExecStart=/path/to/venv/bin/python /path/to/script.py
+
+	4.	Enable lingering for your user (to allow service to run after reboot):
+
+sudo loginctl enable-linger $USER
+
+	5.	Enable and start the service:
+
+systemctl --user daemon-reexec
+systemctl --user daemon-reload
+systemctl --user enable my-service.service
+systemctl --user start my-service.service
+
+	6.	Reboot and confirm that your script runs automatically:
+
+sudo reboot
+
+
+⸻
+
+This approach is ideal for GUI-based or user-specific services (e.g., MPV slideshows, kiosk apps, Python scripts with display output).
