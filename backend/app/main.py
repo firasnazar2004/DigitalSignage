@@ -1,0 +1,49 @@
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from contextlib import asynccontextmanager
+import uvicorn
+from backend.app.router import router
+from backend.app.db import create_db_and_tables
+from fastapi.security import APIKeyHeader
+import os
+
+api_key_header = APIKeyHeader(name="X-API-KEY", auto_error=False)
+
+@asynccontextmanager
+async def lifespan(app:FastAPI):
+    print("Starting Digital Signage ..")
+    STORAGE_BASE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "storage")
+    os.makedirs(os.path.join(STORAGE_BASE_DIR, "media"), exist_ok=True)
+    create_db_and_tables()  
+    yield
+    print("Shutting down system")
+
+
+app = FastAPI(
+    title= "Digital Signage Project",
+    description='Digital Signage to support both smart and non-smart displays',
+    version="1.0.0",
+    lifespan=lifespan
+    
+)
+
+origins = [
+    "http://localhost",
+    "http://localhost:8080", 
+    "http://localhost:5500",  
+    "file://", 
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+app.include_router(router)
+
+@app.get("/")
+def read_root_status():
+    return {"message" : "Digital Signage Project up and running"}

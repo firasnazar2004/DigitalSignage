@@ -1,0 +1,14 @@
+[Unit]
+Description=Digital Signage Client
+After=network.target display-manager.service
+
+[Service]
+User=rasberrybi2
+WorkingDirectory=/home/rasberrybi2/MST/DigitalSignageProject/DigitalSignage
+ExecStart=/home/rasberrybi2/MST/DigitalSignageProject/DigitalSignage/venv/bin/python /home/rasberrybi2/MST/DigitalSignageProject/DigitalSignage/client.py
+Restart=always
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

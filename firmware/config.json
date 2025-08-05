@@ -1,0 +1,7 @@
+{
+  "display_uuid": "YOUR_DISPLAY_UUID",
+  "api_key": "YOUR_API_KEY",
+  "backend_base_url": "http://192.168.100.120:8000",
+  "media_storage_path": "/home/rasberrybi2/MST/DigitalSignageProject/DigitalSignage/Media",
+  "status_check_interval_seconds": 10
+}
