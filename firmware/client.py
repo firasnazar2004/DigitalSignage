@@ -39,11 +39,11 @@ def get_new_media_ids():
     """Fetches a list of new media IDs from the backend."""
     url = f"{BACKEND_BASE_URL}/displays/{DISPLAY_UUID}/media_to_download"
     headers = {"X-API-KEY": API_KEY}
-    print("Attempting to connect to backend at " + url) # NEW
+    print("Attempting to connect to backend at " + url) 
     try:
         response = requests.get(url, headers=headers, timeout=10)
         response.raise_for_status()
-        print("Successfully connected to backend.") # NEW
+        print("Successfully connected to backend.") 
         return response.json()
     except requests.exceptions.RequestException as e:
         print(f"Error getting new media IDs: {e}")
@@ -168,6 +168,8 @@ def stop_mpv():
 
 # --- Main Logic ---
 def main_loop():
+    
+    time.sleep(10)
     """Main loop for checking status and updating media."""
     print("Digital Signage Client Starting...")
     

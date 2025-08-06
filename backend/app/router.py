@@ -10,7 +10,7 @@ from sqlmodel import Session, select, col, delete
 from fastapi.security import APIKeyHeader
 from backend.app.models import Display, DisplayPlaylist, Media, PlaylistMediaLink
 from backend.app.db import get_session  
-
+from . import storage
 
 api_key_header = APIKeyHeader(name="X-API-KEY", auto_error=False)
 
@@ -88,96 +88,109 @@ async def get_locations(session:Session = Depends(get_session)):
 
 @router.get('/admin/display_by_location/{location}')
 async def get_displays_by_location(location : str, session = Depends(get_session)):
-    displays = session.exec(select(Display.uuid , Display.name).where(col(Display.location) == location)).all()
-    display_list = [{'uuid': d[0], "name":d[1]} for d in displays]
+    displays = session.exec(
+        select(Display.uuid, Display.name, Display.api_key)
+        .where(col(Display.location) == location)
+    ).all()
+    
+    display_list = [{'uuid': d[0], 'name': d[1], 'api_key': d[2]} for d in displays]
     return {"displays": display_list}
 
 
 
 
-@router.post("/admin/upload_media", response_model=UploadMediaResponse)
+@router.post("/admin/upload_media", response_model= List[UploadMediaResponse])
 async def upload_media(
     #media_type: str,
-    file: UploadFile = File(...),
+    files: List[UploadFile] = File(...),
     display_uuids: Optional[List[UUID]] = Form(None), 
     session: Session = Depends(get_session)
 ):
-    if file.content_type not in ALLOWED_MIME_TYPES:
-        raise HTTPException(status_code=400, detail="Unsupported file type")
+    responses =[]
+    for file in files: 
+        if file.content_type not in ALLOWED_MIME_TYPES:
+            raise HTTPException(status_code=400, detail="Unsupported file type")
     
-    media_type = "image" if file.content_type.startswith("image") else "video"
+    
+        media_type = "image" if file.content_type.startswith("image") else "video"
 
-    media_id = uuid4()
-    extension = os.path.splitext(file.filename)[-1]
-    filepath_on_disk = os.path.join(STORAGE_PATH, f"{media_id}{extension}")
+        media_id = uuid4()
+        extension = os.path.splitext(file.filename)[-1]
+        filepath_on_disk = os.path.join(STORAGE_PATH, f"{media_id}{extension}")
 
 
-    try:
-        with open(filepath_on_disk, "wb") as buffer:
-            while chunk := await file.read(8192):
-                buffer.write(chunk)
+        try:
+            with open(filepath_on_disk, "wb") as buffer:
+                while chunk := await file.read(8192):
+                    buffer.write(chunk)
+                    
+        except IOError as e:
+            #Delete partially written file if error arises
+            if os.path.exists(filepath_on_disk):
+                os.remove(filepath_on_disk)
+            raise HTTPException(status_code=500, detail=f"Failed to save file: {e}")
+        
+
+        file_size = os.path.getsize(filepath_on_disk)
+        new_media = Media(
+            id=media_id,
+            original_filename=file.filename,
+            filepath_on_disk=filepath_on_disk,
+            content_type=file.content_type,
+            media_type=media_type,
+            size=file_size,
+        )
+        session.add(new_media)
+        
+        assigned_uuids = []
+        if display_uuids:
+            for display_uuid in display_uuids:
+                display_playlist = session.exec(
+                    select(DisplayPlaylist).where(col(DisplayPlaylist.display_uuid) == display_uuid)
+                ).first()
+
+                if not display_playlist:
+                    continue
+
+                last_item = session.exec(
+                    select(PlaylistMediaLink)
+                    .where(col(PlaylistMediaLink.display_playlist_id) == display_playlist.id)
+                    .order_by(col(PlaylistMediaLink.order).desc())
+                ).first()
+                next_order = last_item.order + 1 if last_item else 0
+
+                playlist_link = PlaylistMediaLink(
+                    display_playlist_id=display_playlist.id,
+                    media_id= new_media.id,
+                    order = next_order,
+                    is_new=True
+                )
+
                 
-    except IOError as e:
-        #Delete partially written file if error arises
-        if os.path.exists(filepath_on_disk):
-            os.remove(filepath_on_disk)
-        raise HTTPException(status_code=500, detail=f"Failed to save file: {e}")
-    
+                session.add(playlist_link)
 
-    file_size = os.path.getsize(filepath_on_disk)
-    new_media = Media(
-        id=media_id,
-        original_filename=file.filename,
-        filepath_on_disk=filepath_on_disk,
-        content_type=file.content_type,
-        media_type=media_type,
-        size=file_size,
-    )
-    session.add(new_media)
-    session.commit()
-    session.refresh(new_media)
+                
+                display_playlist.last_updated = datetime.now()
+                session.add(display_playlist)
+                assigned_uuids.append(display_uuid)
 
-    assigned_uuids = []
-    if display_uuids:
-        for display_uuid in display_uuids:
-            display_playlist = session.exec(
-                select(DisplayPlaylist).where(col(DisplayPlaylist.display_uuid) == display_uuid)
-            ).first()
 
-            if not display_playlist:
-                continue
 
-            last_item = session.exec(
-                select(PlaylistMediaLink)
-                .where(col(PlaylistMediaLink.display_playlist_id) == display_playlist.id)
-                .order_by(col(PlaylistMediaLink.order).desc())
-            ).first()
-            next_order = last_item.order + 1 if last_item else 0
-
-            playlist_link = PlaylistMediaLink(
-                display_playlist_id=display_playlist.id,
-                media_id= new_media.id,
-                order = next_order,
-                is_new=True
-            )
-
-            
-            session.add(playlist_link)
-
-            
-            display_playlist.last_updated = datetime.now()
-            session.add(display_playlist)
-            assigned_uuids.append(display_uuid)
 
         session.commit()
+        session.refresh(new_media)
 
-    return UploadMediaResponse(
-        message=f"Media '{file.filename}' uploaded to library",
-        media_id=new_media.id,
-        media_type=new_media.media_type,
-        size=new_media.size,
-        assigned_displays=assigned_uuids
-    )
+        
+
+        responses.append(UploadMediaResponse(
+            message=f"Media '{file.filename}' uploaded to library",
+            media_id=new_media.id,
+            media_type=new_media.media_type,
+            size=new_media.size,
+            assigned_displays=assigned_uuids
+        ))
+
+    return responses
 
 
 

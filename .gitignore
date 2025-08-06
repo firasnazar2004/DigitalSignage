@@ -1,2 +1,3 @@
 **/.DS_Store
 /backend/app/storage/media/
+/backend/app/__pycache__/
