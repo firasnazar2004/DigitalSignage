@@ -13,7 +13,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #3b82f6;
             min-height: 100vh;
             color: #333;
         }
@@ -22,12 +22,30 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
+            position: relative;
+        }
+
+        .logo {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 10;
+        }
+
+        .logo img {
+            width: 120px;
+            height: 120px;
+            border-radius: 15px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+            background: white;
+            padding: 8px;
         }
 
         .header {
             text-align: center;
             margin-bottom: 40px;
             color: white;
+            margin-top: 40px;
         }
 
         .header h1 {
@@ -63,8 +81,8 @@
 
         .tab.active {
             background: white;
-            color: #667eea;
-            border-bottom: 3px solid #667eea;
+            color: #3b82f6;
+            border-bottom: 3px solid #3b82f6;
         }
 
         .tab:hover {
@@ -104,9 +122,9 @@
         .form-group input:focus,
         .form-group select:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #3b82f6;
             background: white;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
 
         .file-input-wrapper {
@@ -118,26 +136,26 @@
         .file-input {
             width: 100%;
             padding: 40px 15px;
-            border: 2px dashed #667eea;
+            border: 2px dashed #3b82f6;
             border-radius: 8px;
             text-align: center;
-            background: #f8f9ff;
+            background: #eff6ff;
             cursor: pointer;
             transition: all 0.3s ease;
         }
 
         .file-input:hover {
-            background: #f0f3ff;
-            border-color: #5a67d8;
+            background: #dbeafe;
+            border-color: #60a5fa;
         }
 
         .file-input.dragover {
-            background: #e6f3ff;
-            border-color: #4299e1;
+            background: #bfdbfe;
+            border-color: #93c5fd;
         }
 
         .btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #3b82f6;
             color: white;
             border: none;
             padding: 12px 30px;
@@ -153,7 +171,8 @@
 
         .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
+            background: #2563eb;
         }
 
         .btn:disabled {
@@ -163,8 +182,13 @@
         }
 
         .btn-secondary {
-            background: #6c757d;
+            background: #6b7280;
             margin-left: 10px;
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+            box-shadow: 0 5px 15px rgba(107, 114, 128, 0.3);
         }
 
         .alert {
@@ -187,9 +211,9 @@
         }
 
         .alert-info {
-            background: #d1ecf1;
-            color: #0c5460;
-            border: 1px solid #bee5eb;
+            background: #dbeafe;
+            color: #3b82f6;
+            border: 1px solid #bfdbfe;
         }
 
         .loading {
@@ -197,7 +221,7 @@
             width: 20px;
             height: 20px;
             border: 3px solid #f3f3f3;
-            border-top: 3px solid #667eea;
+            border-top: 3px solid #3b82f6;
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
@@ -235,12 +259,12 @@
         }
 
         .step.active {
-            background: #667eea;
+            background: #3b82f6;
             color: white;
         }
 
         .step.completed {
-            background: #28a745;
+            background: #10b981;
             color: white;
         }
 
@@ -260,7 +284,7 @@
         }
 
         .step.completed::after {
-            background: #28a745;
+            background: #10b981;
         }
 
         .displays-grid {
@@ -280,14 +304,14 @@
         }
 
         .display-card:hover {
-            border-color: #667eea;
+            border-color: #3b82f6;
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
         .display-card.selected {
-            border-color: #667eea;
-            background: #f0f3ff;
+            border-color: #3b82f6;
+            background: #eff6ff;
         }
 
         .display-card h4 {
@@ -313,10 +337,27 @@
             word-break: break-all;
             font-family: 'Courier New', monospace;
         }
+
+        /* Responsive adjustments for logo */
+        @media (max-width: 768px) {
+            .logo {
+                position: static;
+                text-align: center;
+                margin-bottom: 20px;
+            }
+            
+            .header {
+                margin-top: 20px;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
+        <div class="logo">
+            <img src="https://media.licdn.com/dms/image/v2/D4D0BAQGWfW_GMThsGQ/company-logo_200_200/company-logo_200_200/0/1738838099205/mst_iot_logo?e=2147483647&v=beta&t=Y0EaJymaSLJ3YzznNXjtHzv3uEUIXABrXuqHlD2LrPQ" alt="MST IoT Logo">
+        </div>
+
         <div class="header">
             <h1>🖥️ Digital Signage Management</h1>
             <p>Manage displays and media content for your digital signage network</p>
