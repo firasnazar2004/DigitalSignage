@@ -193,6 +193,7 @@ async def upload_media(
     return responses
 
 
+@router.post("admin/media_to_delete", response_model= List[str])
 
 
 
