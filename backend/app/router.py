@@ -31,6 +31,10 @@ class AssignMediaRequest(BaseModel):
     display__uuid: UUID
     media_ids: List[UUID]
 
+class BulkMarkDownloadedRequest(BaseModel): 
+    media_ids : List[UUID]
+ 
+
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 STORAGE_BASE_DIR = os.path.join(CURRENT_DIR, "storage")
 ALLOWED_MIME_TYPES = {"image/jpeg", "image/png", "image/gif", "image/webp", "image/svg+xml", "video/mp4", "video/webm", "video/ogg", "video/x-msvideo"}
@@ -252,6 +256,69 @@ async def get_display_status(uuid: UUID, session: Session = Depends(get_session)
         "last_updated": playlist_version_indicator,
         "playlist_item_count": playlist_item_count
     }
+
+@router.get('displays/{uuid}/sync')
+async def display_sync(uuid:UUID , session:Session = Depends(get_session) , display: Display = Depends(get_display_by_api_key)):
+    if display.uuid != uuid: 
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail ="Invalid API key for this uuid")
+    
+    display_playlist = session.exec(select(DisplayPlaylist).where(col(DisplayPlaylist.display_uuid)==uuid)).first()
+
+    if not display_playlist: 
+        return {
+            "status": "no_play_list_assigned",
+            "last_updated": None , 
+            "playlist_item_count" : 0, 
+            "new_media" : []
+        }
+    
+    playlist_links = session.exec(select(PlaylistMediaLink).where(col(PlaylistMediaLink.display_playlist_id) == display_playlist.id).order_by(PlaylistMediaLink.order) ).all()
+
+    playlist_item_count = len(playlist_links)
+    playlist_version_indicator = display_playlist.last_updated.isoformat() if display_playlist.last_updated else None
+
+    new_media_links = session.exec(select(PlaylistMediaLink).where(col(PlaylistMediaLink.display_playlist_id) == display_playlist.id , col(PlaylistMediaLink.is_new) == True).order_by(PlaylistMediaLink.order)).all()
+
+    new_media = []
+    for link in new_media_links:
+        media_item = session.exec(select(Media).where(col(Media.id) == link.media_id)).first()
+        if media_item and os.path.exists(media_item.filepath_on_disk): 
+            new_media.append({
+                "id": str(media_item.id),
+                "url" : f"/media/{media_item.id}", 
+                "type" : media_item.media_type , 
+
+            })
+
+    return { 
+        "status" : "active", 
+        "last_updated" : playlist_version_indicator, 
+        "playlist_item_count" : playlist_item_count, 
+        "new_media" : new_media
+    }
+
+
+@router.post('/displays/{uuid}/mark_downloaded_bulk')
+async def mark_downloaded_bulk(uuid: UUID, request_data: BulkMarkDownloadedRequest, session: Session = Depends(get_session) , display: Display = Depends(get_display_by_api_key)):
+    if display.uuid != uuid:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail = "Invalid API Key for this display UUID")
+    
+    display_playlist = session.exec(select(DisplayPlaylist).where(col(DisplayPlaylist.display_uuid) ==uuid)).first()
+
+    if not display_playlist: 
+        raise HTTPException(status_code=404 , detail="Playlist not found for this display.")
+    
+    updated_count = 0 
+    for media_id in request_data.media_ids: 
+        playlist_link = session.exec(select(PlaylistMediaLink).where(col(PlaylistMediaLink.media_id) == media_id, col(PlaylistMediaLink.display_playlist_id == display_playlist.id))).first()
+
+        if playlist_link: 
+            playlist_link.is_new = False
+            session.add(playlist_link)
+            updated_count +=1 
+    
+    session.commit()
+    return {"message" : f"{updated_count} media items marked as downloaded"}
 
 @router.get('/displays/{uuid}/media_to_download')
 async def get_new_media_for_download(uuid: UUID, session: Session = Depends(get_session), display: Display = Depends(get_display_by_api_key)):
