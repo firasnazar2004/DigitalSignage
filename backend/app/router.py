@@ -257,7 +257,7 @@ async def get_display_status(uuid: UUID, session: Session = Depends(get_session)
         "playlist_item_count": playlist_item_count
     }
 
-@router.get('displays/{uuid}/sync')
+@router.get('/displays/{uuid}/sync')
 async def display_sync(uuid:UUID , session:Session = Depends(get_session) , display: Display = Depends(get_display_by_api_key)):
     if display.uuid != uuid: 
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail ="Invalid API key for this uuid")
