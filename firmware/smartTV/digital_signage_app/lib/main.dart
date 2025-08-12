@@ -647,11 +647,22 @@ class _SignageDisplayState extends State<SignageDisplay> with TickerProviderStat
 
     final currentMedia = PlaylistManager.playlist[PlaylistManager.currentIndex];
 
-    if (currentMedia.mediaType == 'video' && _videoController != null && _videoController!.value.isInitialized) {
-      return AspectRatio(
-        aspectRatio: _videoController!.value.aspectRatio,
-        child: VideoPlayer(_videoController!),
-      );
+    if (currentMedia.mediaType == 'video' && _videoController != null) {
+      // Corrected video player rendering with a more robust check
+      if (_videoController!.value.isInitialized && _videoController!.value.aspectRatio > 0) {
+        return AspectRatio(
+          aspectRatio: _videoController!.value.aspectRatio,
+          child: VideoPlayer(_videoController!),
+        );
+      } else {
+        // Fallback or a loading indicator while the video initializes
+        return Center(
+          child: CircularProgressIndicator(
+            color: Color(0xFF00D4FF),
+            strokeWidth: 3,
+          ),
+        );
+      }
     } else if (currentMedia.mediaType == 'image') {
       return Image.network(
         currentMedia.url,
