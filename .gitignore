@@ -1,3 +1,6 @@
 **/.DS_Store
 /backend/app/storage/media/
 /backend/app/__pycache__/
+/firmware/smartTV/digital_signage_app/*
+!/firmware/smartTV/digital_signage_app/lib/main.dart
+!/firmware/smartTV/digital_signage_app/pubspec.yaml
