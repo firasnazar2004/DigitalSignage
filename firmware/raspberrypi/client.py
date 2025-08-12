@@ -39,11 +39,11 @@ def get_new_media_ids():
     """Fetches a list of new media IDs from the backend."""
     url = f"{BACKEND_BASE_URL}/displays/{DISPLAY_UUID}/media_to_download"
     headers = {"X-API-KEY": API_KEY}
-    print("Attempting to connect to backend at " + url) 
+    print("Attempting to connect to backend at " + url) # NEW
     try:
         response = requests.get(url, headers=headers, timeout=10)
         response.raise_for_status()
-        print("Successfully connected to backend.") 
+        print("Successfully connected to backend.") # NEW
         return response.json()
     except requests.exceptions.RequestException as e:
         print(f"Error getting new media IDs: {e}")
@@ -92,11 +92,12 @@ def download_media(media_id):
         return None
 
 def mark_media_downloaded_on_backend(media_id):
-    """Marks a media item as downloaded on the backend."""
-    url = f"{BACKEND_BASE_URL}/displays/{DISPLAY_UUID}/mark_downloaded/{media_id}"
-    headers = {"X-API-KEY": API_KEY}
+    """Marks a media item as downloaded on the backend using the bulk endpoint."""
+    url = f"{BACKEND_BASE_URL}/displays/{DISPLAY_UUID}/mark_downloaded_bulk"
+    headers = {"X-API-KEY": API_KEY, "Content-Type": "application/json"}
+    payload = {"media_ids": [media_id]}
     try:
-        response = requests.post(url, headers=headers, timeout=10)
+        response = requests.post(url, headers=headers, json=payload, timeout=10)
         response.raise_for_status()
         print(f"Successfully marked media {media_id} as downloaded on backend.")
     except requests.exceptions.RequestException as e:
