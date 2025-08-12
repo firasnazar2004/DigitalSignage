@@ -298,27 +298,6 @@ async def display_sync(uuid:UUID , session:Session = Depends(get_session) , disp
     }
 
 
-@router.post('/displays/{uuid}/mark_downloaded_bulk')
-async def mark_downloaded_bulk(uuid: UUID, request_data: BulkMarkDownloadedRequest, session: Session = Depends(get_session) , display: Display = Depends(get_display_by_api_key)):
-    if display.uuid != uuid:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail = "Invalid API Key for this display UUID")
-    
-    display_playlist = session.exec(select(DisplayPlaylist).where(col(DisplayPlaylist.display_uuid) ==uuid)).first()
-
-    if not display_playlist: 
-        raise HTTPException(status_code=404 , detail="Playlist not found for this display.")
-    
-    updated_count = 0 
-    for media_id in request_data.media_ids: 
-        playlist_link = session.exec(select(PlaylistMediaLink).where(col(PlaylistMediaLink.media_id) == media_id, col(PlaylistMediaLink.display_playlist_id == display_playlist.id))).first()
-
-        if playlist_link: 
-            playlist_link.is_new = False
-            session.add(playlist_link)
-            updated_count +=1 
-    
-    session.commit()
-    return {"message" : f"{updated_count} media items marked as downloaded"}
 
 @router.get('/displays/{uuid}/media_to_download')
 async def get_new_media_for_download(uuid: UUID, session: Session = Depends(get_session), display: Display = Depends(get_display_by_api_key)):
@@ -339,38 +318,27 @@ async def get_new_media_for_download(uuid: UUID, session: Session = Depends(get_
     new_media_ids = [link.media_id for link in new_media_links]
     return new_media_ids
 
-@router.post('/displays/{uuid}/mark_downloaded/{media_id}')
-async def mark_media_downloaded(uuid: UUID, media_id: UUID, session: Session = Depends(get_session), display: Display = Depends(get_display_by_api_key)):
+@router.post('/displays/{uuid}/mark_downloaded_bulk')
+async def mark_downloaded_bulk(uuid: UUID, request_data: BulkMarkDownloadedRequest, session: Session = Depends(get_session) , display: Display = Depends(get_display_by_api_key)):
     if display.uuid != uuid:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Invalid API Key for this display UUID')
-
-    # First, find the display's playlist
-    display_playlist = session.exec(
-        select(DisplayPlaylist).where(col(DisplayPlaylist.display_uuid) == uuid)
-    ).first()
-
-    if not display_playlist:
-        raise HTTPException(status_code=404, detail="Playlist not found for this display.")
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail = "Invalid API Key for this display UUID")
     
-    # Now, find the specific playlist link using the media_id and the correct playlist id
-    playlist_link = session.exec(
-        select(PlaylistMediaLink)
-        .where(
-            col(PlaylistMediaLink.media_id) == media_id,
-            col(PlaylistMediaLink.display_playlist_id) == display_playlist.id
-        )
-    ).first()
+    display_playlist = session.exec(select(DisplayPlaylist).where(col(DisplayPlaylist.display_uuid) ==uuid)).first()
 
-    if not playlist_link:
-        raise HTTPException(status_code=404, detail="Media not found in this display's playlist.")
+    if not display_playlist: 
+        raise HTTPException(status_code=404 , detail="Playlist not found for this display.")
+    
+    updated_count = 0 
+    for media_id in request_data.media_ids: 
+        playlist_link = session.exec(select(PlaylistMediaLink).where(col(PlaylistMediaLink.media_id) == media_id, PlaylistMediaLink.display_playlist_id == display_playlist.id)).first()
 
-    playlist_link.is_new = False
-    session.add(playlist_link)
-    # The redundant session.add() is removed
+        if playlist_link: 
+            playlist_link.is_new = False
+            session.add(playlist_link)
+            updated_count +=1 
+    
     session.commit()
-    session.refresh(playlist_link)
-
-    return {"message": f"Media {media_id} marked as downloaded."}
+    return {"message" : f"{updated_count} media items marked as downloaded"}
 
 @router.get('/media/{media_id}')
 async def get_specific_media(media_id: UUID, session: Session = Depends(get_session)):
