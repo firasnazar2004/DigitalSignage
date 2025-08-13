@@ -25,9 +25,12 @@ class Media(SQLModel , table = True):
     upload_timestamp: datetime = Field(default_factory=datetime.now)
     media_type : str
     size: int 
+    sha256_hash : str = Field(unique=True,index= True)
    #configuration : Dict[str,Any] = Field(default_factory=dict, sa_column=sqlalchemy.Column(JSONB))
     playlist_media_links : List['PlaylistMediaLink'] = Relationship(back_populates='media')
 
+
+    
 
 class DisplayPlaylist(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)

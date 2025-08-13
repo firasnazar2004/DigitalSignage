@@ -10,6 +10,7 @@ from sqlmodel import Session, select, col, delete
 from fastapi.security import APIKeyHeader
 from backend.app.models import Display, DisplayPlaylist, Media, PlaylistMediaLink
 from backend.app.db import get_session  
+import hashlib
 from . import storage
 
 api_key_header = APIKeyHeader(name="X-API-KEY", auto_error=False)
@@ -115,36 +116,45 @@ async def upload_media(
         if file.content_type not in ALLOWED_MIME_TYPES:
             raise HTTPException(status_code=400, detail="Unsupported file type")
     
-    
-        media_type = "image" if file.content_type.startswith("image") else "video"
+        file_content = await file.read()
+        sha256_hash = hashlib.sha256(file_content).hexdigest()
 
-        media_id = uuid4()
-        extension = os.path.splitext(file.filename)[-1]
-        filepath_on_disk = os.path.join(STORAGE_PATH, f"{media_id}{extension}")
+        existing_media = session.exec(select(Media).where(Media.sha256_hash== sha256_hash)).first()
+        if existing_media:
+            media = existing_media
+            print(f"File with hash {sha256_hash} already exists as {media.id}. Skipping upload.")
+
+        else:
+            media_id = uuid4()
+            extension = os.path.splitext(file.filename)[-1]
+            filepath_on_disk = os.path.join(STORAGE_PATH, f"{media_id}{extension}")
+
+            try:
+                with open(filepath_on_disk,"wb") as buffer: 
+                    buffer.write(file_content)
+            except IOError as e:
+                if os.path.exists(filepath_on_disk):
+                    os.remove(filepath_on_disk)
+                raise HTTPException(status_code=500, detail=f"Failed to save file: {e}")
+
+            file_size = os.path.getsize(filepath_on_disk)
+            media_type = "image" if file.content_type.startswith("image") else "video"
+            
+            media = Media(
+                id = media_id,
+                original_filename= file.filename,
+                filepath_on_disk= filepath_on_disk, 
+                content_type= file.content_type, 
+                media_type = media_type,
+                size = file_size, 
+                sha256_hash=sha256_hash
+            )
+            session.add(media)
+            session.commit()
+            session.refresh(media)
 
 
-        try:
-            with open(filepath_on_disk, "wb") as buffer:
-                while chunk := await file.read(8192):
-                    buffer.write(chunk)
-                    
-        except IOError as e:
-            #Delete partially written file if error arises
-            if os.path.exists(filepath_on_disk):
-                os.remove(filepath_on_disk)
-            raise HTTPException(status_code=500, detail=f"Failed to save file: {e}")
         
-
-        file_size = os.path.getsize(filepath_on_disk)
-        new_media = Media(
-            id=media_id,
-            original_filename=file.filename,
-            filepath_on_disk=filepath_on_disk,
-            content_type=file.content_type,
-            media_type=media_type,
-            size=file_size,
-        )
-        session.add(new_media)
         
         assigned_uuids = []
         if display_uuids:
@@ -165,7 +175,7 @@ async def upload_media(
 
                 playlist_link = PlaylistMediaLink(
                     display_playlist_id=display_playlist.id,
-                    media_id= new_media.id,
+                    media_id= media.id,
                     order = next_order,
                     is_new=True
                 )
@@ -182,15 +192,15 @@ async def upload_media(
 
 
         session.commit()
-        session.refresh(new_media)
+        session.refresh(media)
 
         
 
         responses.append(UploadMediaResponse(
             message=f"Media '{file.filename}' uploaded to library",
-            media_id=new_media.id,
-            media_type=new_media.media_type,
-            size=new_media.size,
+            media_id=media.id,
+            media_type=media.media_type,
+            size=media.size,
             assigned_displays=assigned_uuids
         ))
 
