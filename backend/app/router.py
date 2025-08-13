@@ -104,33 +104,39 @@ async def get_displays_by_location(location : str, session = Depends(get_session
 
 
 
-@router.post("/admin/upload_media", response_model= List[UploadMediaResponse])
+@router.post("/admin/upload_media", response_model=List[UploadMediaResponse])
 async def upload_media(
-    #media_type: str,
     files: List[UploadFile] = File(...),
-    display_uuids: Optional[List[UUID]] = Form(None), 
+    display_uuids: Optional[List[UUID]] = Form(None),
     session: Session = Depends(get_session)
 ):
-    responses =[]
-    for file in files: 
+    responses = []
+    
+    if not files:
+        raise HTTPException(status_code=400, detail="No files uploaded.")
+        
+    for file in files:
         if file.content_type not in ALLOWED_MIME_TYPES:
             raise HTTPException(status_code=400, detail="Unsupported file type")
-    
+
         file_content = await file.read()
         sha256_hash = hashlib.sha256(file_content).hexdigest()
 
-        existing_media = session.exec(select(Media).where(Media.sha256_hash== sha256_hash)).first()
+        existing_media = session.exec(
+            select(Media).where(Media.sha256_hash == sha256_hash)
+        ).first()
+
         if existing_media:
             media = existing_media
             print(f"File with hash {sha256_hash} already exists as {media.id}. Skipping upload.")
-
         else:
             media_id = uuid4()
-            extension = os.path.splitext(file.filename)[-1]
-            filepath_on_disk = os.path.join(STORAGE_PATH, f"{media_id}{extension}")
+            #extension = os.path.splitext(file.filename)[-1]
+            filename = "".join(c for c in file.filename if c.isalnum() or c in "._-").rstrip()
+            filepath_on_disk = os.path.join(STORAGE_PATH, f"{filename}")
 
             try:
-                with open(filepath_on_disk,"wb") as buffer: 
+                with open(filepath_on_disk, "wb") as buffer:
                     buffer.write(file_content)
             except IOError as e:
                 if os.path.exists(filepath_on_disk):
@@ -139,62 +145,63 @@ async def upload_media(
 
             file_size = os.path.getsize(filepath_on_disk)
             media_type = "image" if file.content_type.startswith("image") else "video"
-            
+
             media = Media(
-                id = media_id,
-                original_filename= file.filename,
-                filepath_on_disk= filepath_on_disk, 
-                content_type= file.content_type, 
-                media_type = media_type,
-                size = file_size, 
+                id=media_id,
+                original_filename=file.filename,
+                filepath_on_disk=filepath_on_disk,
+                content_type=file.content_type,
+                media_type=media_type,
+                size=file_size,
                 sha256_hash=sha256_hash
             )
             session.add(media)
             session.commit()
             session.refresh(media)
 
-
-        
-        
         assigned_uuids = []
         if display_uuids:
             for display_uuid in display_uuids:
                 display_playlist = session.exec(
-                    select(DisplayPlaylist).where(col(DisplayPlaylist.display_uuid) == display_uuid)
+                    select(DisplayPlaylist).where(DisplayPlaylist.display_uuid == display_uuid)
                 ).first()
 
                 if not display_playlist:
                     continue
+                
+                # Check if the media is already linked to this playlist
+                existing_link = session.exec(
+                    select(PlaylistMediaLink)
+                    .where(PlaylistMediaLink.display_playlist_id == display_playlist.id)
+                    .where(PlaylistMediaLink.media_id == media.id)
+                ).first()
+
+                if existing_link:
+                    print(f"Media {media.id} is already in playlist {display_playlist.id}. Skipping link creation.")
+                    assigned_uuids.append(display_uuid)
+                    continue
 
                 last_item = session.exec(
                     select(PlaylistMediaLink)
-                    .where(col(PlaylistMediaLink.display_playlist_id) == display_playlist.id)
-                    .order_by(col(PlaylistMediaLink.order).desc())
+                    .where(PlaylistMediaLink.display_playlist_id == display_playlist.id)
+                    .order_by(PlaylistMediaLink.order.desc())
                 ).first()
                 next_order = last_item.order + 1 if last_item else 0
 
                 playlist_link = PlaylistMediaLink(
                     display_playlist_id=display_playlist.id,
-                    media_id= media.id,
-                    order = next_order,
+                    media_id=media.id,
+                    order=next_order,
                     is_new=True
                 )
-
-                
                 session.add(playlist_link)
-
                 
                 display_playlist.last_updated = datetime.now()
                 session.add(display_playlist)
                 assigned_uuids.append(display_uuid)
-
-
-
-
+                
         session.commit()
         session.refresh(media)
-
-        
 
         responses.append(UploadMediaResponse(
             message=f"Media '{file.filename}' uploaded to library",
@@ -203,9 +210,8 @@ async def upload_media(
             size=media.size,
             assigned_displays=assigned_uuids
         ))
-
+    
     return responses
-
 
 @router.post("admin/media_to_delete", response_model= List[str])
 
@@ -297,6 +303,7 @@ async def display_sync(uuid:UUID , session:Session = Depends(get_session) , disp
                 "id": str(media_item.id),
                 "url" : f"/media/{media_item.id}", 
                 "type" : media_item.media_type , 
+                "original_filename" : media_item.original_filename
 
             })
 

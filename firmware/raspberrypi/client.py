@@ -30,27 +30,28 @@ MEDIA_STORAGE_PATH = config['media_storage_path']
 STATUS_CHECK_INTERVAL = config['status_check_interval_seconds']
 
 
-# --- Global State ---
+
 last_backend_update_timestamp = None
 mpv_process = None # To hold the mpv subprocess
 
 # --- API Interaction Functions ---
-def get_new_media_ids():
+def get_new_media():
     """Fetches a list of new media IDs from the backend."""
-    url = f"{BACKEND_BASE_URL}/displays/{DISPLAY_UUID}/media_to_download"
+    url = f"{BACKEND_BASE_URL}/displays/{DISPLAY_UUID}/sync"
     headers = {"X-API-KEY": API_KEY}
-    print("Attempting to connect to backend at " + url) # NEW
+    print("Attempting to connect to backend at " + url) 
     try:
         response = requests.get(url, headers=headers, timeout=10)
         response.raise_for_status()
-        print("Successfully connected to backend.") # NEW
-        return response.json()
+        print("Successfully connected to backend.") 
+        sync_data = response.json()
+        return sync_data.get('new_media' ,[])
     except requests.exceptions.RequestException as e:
         print(f"Error getting new media IDs: {e}")
         return []
 
-def download_media(media_id):
-    """Downloads a specific media file by its ID."""
+def download_media(media_id , original_filename):
+    
     url = f"{BACKEND_BASE_URL}/media/{media_id}"
     headers = {"X-API-KEY": API_KEY}
     try:
@@ -80,7 +81,7 @@ def download_media(media_id):
         else:
             extension = '.bin'
 
-        filepath = os.path.join(MEDIA_STORAGE_PATH, f"{media_id}{extension}")
+        filepath = os.path.join(MEDIA_STORAGE_PATH, original_filename)
         
         with open(filepath, 'wb') as f:
             for chunk in response.iter_content(chunk_size=8192):
@@ -172,23 +173,28 @@ def main_loop():
     
     time.sleep(10)
     """Main loop for checking status and updating media."""
+
     print("Digital Signage Client Starting...")
     
-    print("Attempting to start initial mpv playlist...") # NEW
+    print("Attempting to start initial mpv playlist...") 
     start_mpv_playlist()
-    print("Initial mpv playlist started. Entering main loop...") # NEW
+    print("Initial mpv playlist started. Entering main loop...") 
 
     while True:
         print(f"\nChecking backend for new media...")
-        new_media_ids = get_new_media_ids()
+        new_media = get_new_media()
 
-        if new_media_ids:
-            print(f"Found {len(new_media_ids)} new media items to download.")
+        if new_media:
+            print(f"Found {len(new_media)} new media items to download.")
             
             downloaded_count = 0
-            for media_id_str in new_media_ids:
-                print(f"Downloading new media ID: {media_id_str}")
-                filepath = download_media(media_id_str)
+            for media_item in new_media:
+                media_id_str = media_item['id']
+                original_filename = media_item['original_filename']
+
+
+                print(f"Downloading new media: {original_filename}")
+                filepath = download_media(media_id_str, original_filename)
                 if filepath:
                     mark_media_downloaded_on_backend(media_id_str)
                     downloaded_count += 1
@@ -200,7 +206,7 @@ def main_loop():
         else:
             print("No new media found on backend.")
 
-        print(f"Waiting for {STATUS_CHECK_INTERVAL} seconds...") # NEW
+        print(f"Waiting for {STATUS_CHECK_INTERVAL} seconds...") 
         time.sleep(STATUS_CHECK_INTERVAL)
 
 if __name__ == "__main__":
