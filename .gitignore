@@ -4,4 +4,4 @@
 /firmware/smartTV/digital_signage_app/*
 !/firmware/smartTV/digital_signage_app/lib/
 !/firmware/smartTV/digital_signage_app/lib/main.dart
-!/firmware/smartTV/digital_signage_app/pubspec.yaml
+!/firmware/smartTV/digital_signage_app/pubspec.yaml.DS_Store
