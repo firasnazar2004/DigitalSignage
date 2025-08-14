@@ -108,6 +108,7 @@ async def get_displays_by_location(location : str, session = Depends(get_session
 async def upload_media(
     files: List[UploadFile] = File(...),
     display_uuids: Optional[List[UUID]] = Form(None),
+    override_playlist: bool = Form(False),  
     session: Session = Depends(get_session)
 ):
     responses = []
@@ -168,6 +169,13 @@ async def upload_media(
 
                 if not display_playlist:
                     continue
+
+                if override_playlist: 
+                    delete_statement = delete(PlaylistMediaLink).where(PlaylistMediaLink.display_playlist_id == display_playlist.id)
+                    session.exec(delete_statement)
+
+                    display_playlist.current_index = 0
+                
                 
                 # Check if the media is already linked to this playlist
                 existing_link = session.exec(
@@ -176,7 +184,7 @@ async def upload_media(
                     .where(PlaylistMediaLink.media_id == media.id)
                 ).first()
 
-                if existing_link:
+                if existing_link and not override_playlist:
                     print(f"Media {media.id} is already in playlist {display_playlist.id}. Skipping link creation.")
                     assigned_uuids.append(display_uuid)
                     continue
