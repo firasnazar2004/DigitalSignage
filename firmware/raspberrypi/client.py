@@ -4,6 +4,7 @@ import os
 import time
 import subprocess
 import sys
+import shutil
 from datetime import datetime
 
 # --- Configuration Loading ---
@@ -30,7 +31,6 @@ MEDIA_STORAGE_PATH = config['media_storage_path']
 STATUS_CHECK_INTERVAL = config['status_check_interval_seconds']
 
 
-
 last_backend_update_timestamp = None
 mpv_process = None # To hold the mpv subprocess
 
@@ -39,50 +39,40 @@ def get_new_media():
     """Fetches a list of new media IDs from the backend."""
     url = f"{BACKEND_BASE_URL}/displays/{DISPLAY_UUID}/sync"
     headers = {"X-API-KEY": API_KEY}
-    print("Attempting to connect to backend at " + url) 
+    print("Attempting to connect to backend at " + url)
     try:
         response = requests.get(url, headers=headers, timeout=10)
         response.raise_for_status()
-        print("Successfully connected to backend.") 
+        print("Successfully connected to backend.")
         sync_data = response.json()
         return sync_data.get('new_media' ,[])
     except requests.exceptions.RequestException as e:
         print(f"Error getting new media IDs: {e}")
         return []
 
+def clear_media_folder():
+    """Deletes all files in the media folder."""
+    if os.path.exists(MEDIA_STORAGE_PATH):
+        for filename in os.listdir(MEDIA_STORAGE_PATH):
+            file_path = os.path.join(MEDIA_STORAGE_PATH, filename)
+            try:
+                if os.path.isfile(file_path) or os.path.islink(file_path):
+                    os.remove(file_path)
+                elif os.path.isdir(file_path):
+                    shutil.rmtree(file_path)
+                print(f"Deleted: {file_path}")
+            except Exception as e:
+                print(f"Error deleting {file_path}: {e}")
+
 def download_media(media_id , original_filename):
-    
     url = f"{BACKEND_BASE_URL}/media/{media_id}"
     headers = {"X-API-KEY": API_KEY}
     try:
         response = requests.get(url, headers=headers, stream=True, timeout=30)
         response.raise_for_status()
 
-        content_type = response.headers.get('Content-Type', 'application/octet-stream')
-        
-        if 'image/jpeg' in content_type:
-            extension = '.jpeg'
-        elif 'image/png' in content_type:
-            extension = '.png'
-        elif 'image/gif' in content_type:
-            extension = '.gif'
-        elif 'image/webp' in content_type:
-            extension = '.webp'
-        elif 'image/svg+xml' in content_type:
-            extension = '.svg'
-        elif 'video/mp4' in content_type:
-            extension = '.mp4'
-        elif 'video/webm' in content_type:
-            extension = '.webm'
-        elif 'video/ogg' in content_type:
-            extension = '.ogg'
-        elif 'video/x-msvideo' in content_type:
-            extension = '.avi'
-        else:
-            extension = '.bin'
-
         filepath = os.path.join(MEDIA_STORAGE_PATH, original_filename)
-        
+
         with open(filepath, 'wb') as f:
             for chunk in response.iter_content(chunk_size=8192):
                 f.write(chunk)
@@ -92,17 +82,19 @@ def download_media(media_id , original_filename):
         print(f"Error downloading media {media_id}: {e}")
         return None
 
-def mark_media_downloaded_on_backend(media_id):
+def mark_media_downloaded_on_backend(media_ids):
     """Marks a media item as downloaded on the backend using the bulk endpoint."""
     url = f"{BACKEND_BASE_URL}/displays/{DISPLAY_UUID}/mark_downloaded_bulk"
     headers = {"X-API-KEY": API_KEY, "Content-Type": "application/json"}
-    payload = {"media_ids": [media_id]}
+    # MODIFIED: PASS A LIST OF IDS, NOT A SINGLE ONE
+    payload = {"media_ids": media_ids}
     try:
         response = requests.post(url, headers=headers, json=payload, timeout=10)
         response.raise_for_status()
-        print(f"Successfully marked media {media_id} as downloaded on backend.")
+        # MODIFIED: PRINT THE NUMBER OF ITEMS MARKED
+        print(f"Successfully marked {len(media_ids)} media items as downloaded on backend.")
     except requests.exceptions.RequestException as e:
-        print(f"Error marking media {media_id} as downloaded: {e}")
+        print(f"Error marking media as downloaded: {e}")
 
 # --- MPV Control ---
 def get_local_media_paths():
@@ -133,12 +125,9 @@ def start_mpv_playlist():
         "--shuffle",
         "--fs",
         "--hwdec=auto",
-       # "--no-osc",
-        #"--no-osd-bar",
         "--vo=gpu",
-        #"--input-ipc-server=/tmp/mpvsocket"
     ] + media_paths
-    
+
     # Existing logic to handle a running mpv process
     if mpv_process and mpv_process.poll() is None:
         print("mpv is already running. Stopping to reload playlist...")
@@ -169,16 +158,14 @@ def stop_mpv():
         print("mpv stopped.")
 
 # --- Main Logic ---
+# MODIFIED: REWORKED MAIN LOOP TO HANDLE OVERRIDE LOGIC
 def main_loop():
-    
-    time.sleep(10)
-    """Main loop for checking status and updating media."""
-
+    time.sleep(5)
     print("Digital Signage Client Starting...")
-    
-    print("Attempting to start initial mpv playlist...") 
+
+    print("Attempting to start initial mpv playlist...")
     start_mpv_playlist()
-    print("Initial mpv playlist started. Entering main loop...") 
+    print("Initial mpv playlist started. Entering main loop...")
 
     while True:
         print(f"\nChecking backend for new media...")
@@ -186,27 +173,33 @@ def main_loop():
 
         if new_media:
             print(f"Found {len(new_media)} new media items to download.")
-            
-            downloaded_count = 0
+            downloaded_ids = []
+
+            # ADDED: CHECK FOR OVERRIDE FLAG FROM THE BACKEND RESPONSE
+            override_flag = any(item.get("override", False) for item in new_media)
+            if override_flag:
+                print("Override=True → clearing media folder before download...")
+                clear_media_folder()
+
             for media_item in new_media:
                 media_id_str = media_item['id']
                 original_filename = media_item['original_filename']
 
-
                 print(f"Downloading new media: {original_filename}")
                 filepath = download_media(media_id_str, original_filename)
                 if filepath:
-                    mark_media_downloaded_on_backend(media_id_str)
-                    downloaded_count += 1
-            
-            if downloaded_count > 0:
+                    downloaded_ids.append(media_id_str) # ADDED: APPEND TO A LIST
+
+            if downloaded_ids:
+                # MODIFIED: PASS THE LIST OF DOWNLOADED IDS TO THE BULK ENDPOINT
+                mark_media_downloaded_on_backend(downloaded_ids)
                 print("Finished downloading new media. Restarting mpv with updated playlist.")
                 start_mpv_playlist()
 
         else:
             print("No new media found on backend.")
 
-        print(f"Waiting for {STATUS_CHECK_INTERVAL} seconds...") 
+        print(f"Waiting for {STATUS_CHECK_INTERVAL} seconds...")
         time.sleep(STATUS_CHECK_INTERVAL)
 
 if __name__ == "__main__":

@@ -47,6 +47,6 @@ class PlaylistMediaLink(SQLModel, table=True):
     media_id: Optional[UUID] = Field(default=None, foreign_key="media.id", primary_key=True)
     order: int = Field(default=0)
     is_new: bool = Field(default=True)
-
+    override: bool = Field(default=False)
     display_playlist: DisplayPlaylist = Relationship(back_populates="playlist_media_links")
     media: Media = Relationship(back_populates="playlist_media_links")
