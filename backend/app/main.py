@@ -6,6 +6,9 @@ from backend.app.router import router
 from backend.app.db import create_db_and_tables
 from fastapi.security import APIKeyHeader
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 api_key_header = APIKeyHeader(name="X-API-KEY", auto_error=False)
 
