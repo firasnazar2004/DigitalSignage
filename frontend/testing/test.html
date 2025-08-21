@@ -36,6 +36,56 @@
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
 
+        /* Login Styles */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 80vh;
+        }
+
+        .login-form {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+            backdrop-filter: blur(10px);
+        }
+
+        .login-form h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #667eea;
+            font-size: 2rem;
+        }
+
+        .user-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            background: rgba(255,255,255,0.1);
+            padding: 10px 20px;
+            border-radius: 25px;
+            color: white;
+        }
+
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
         .nav-tabs {
             display: flex;
             justify-content: center;
@@ -180,6 +230,12 @@
         .btn-primary:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
         }
 
         .btn-secondary {
@@ -364,6 +420,10 @@
             justify-content: center;
             font-weight: bold;
         }
+
+        .hidden {
+            display: none !important;
+        }
     </style>
 </head>
 <body>
@@ -373,101 +433,128 @@
             <p>Manage displays and upload media content</p>
         </div>
 
-        <div class="nav-tabs">
-            <button class="nav-tab active" onclick="showTab('register')">Register Display</button>
-            <button class="nav-tab" onclick="showTab('upload')">Upload Media</button>
-        </div>
-
-        <!-- Register Display Tab -->
-        <div id="register-tab" class="tab-content active">
-            <h2>Register New Display</h2>
-            <form id="register-form">
+        <!-- Login Section -->
+        <div id="login-section" class="login-container">
+            <form id="login-form" class="login-form">
+                <h2>Sign In</h2>
                 <div class="form-group">
-                    <label for="display-name">Display Name</label>
-                    <input type="text" id="display-name" class="form-control" required>
+                    <label for="username">Username</label>
+                    <input type="text" id="username" class="form-control" required>
                 </div>
                 <div class="form-group">
-                    <label for="display-mac">MAC Address</label>
-                    <input type="text" id="display-mac" class="form-control" placeholder="AA:BB:CC:DD:EE:FF" required>
+                    <label for="password">Password</label>
+                    <input type="password" id="password" class="form-control" required>
                 </div>
-                <div class="form-group">
-                    <label for="display-location">Location</label>
-                    <input type="text" id="display-location" class="form-control" required>
-                </div>
-                <button type="submit" class="btn btn-primary">Register Display</button>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    Sign In
+                </button>
+                <div id="login-result"></div>
             </form>
-            <div id="register-result"></div>
         </div>
 
-        <!-- Upload Media Tab -->
-        <div id="upload-tab" class="tab-content">
-            <h2>Upload Media Content</h2>
-            
-            <div class="step">
-                <div class="step-title">
-                    <span class="step-number">1</span>
-                    Select Media Files
+        <!-- Main Application (Hidden until authenticated) -->
+        <div id="main-app" class="hidden">
+            <div class="user-info">
+                <span id="welcome-message">Welcome, User!</span>
+                <button class="logout-btn" onclick="logout()">Logout</button>
+            </div>
+
+            <div class="nav-tabs">
+                <button class="nav-tab active" onclick="showTab('register')">Register Display</button>
+                <button class="nav-tab" onclick="showTab('upload')">Upload Media</button>
+            </div>
+
+            <!-- Register Display Tab -->
+            <div id="register-tab" class="tab-content active">
+                <h2>Register New Display</h2>
+                <form id="register-form">
+                    <div class="form-group">
+                        <label for="display-name">Display Name</label>
+                        <input type="text" id="display-name" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="display-mac">MAC Address</label>
+                        <input type="text" id="display-mac" class="form-control" placeholder="AA:BB:CC:DD:EE:FF" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="display-location">Location</label>
+                        <input type="text" id="display-location" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Register Display</button>
+                </form>
+                <div id="register-result"></div>
+            </div>
+
+            <!-- Upload Media Tab -->
+            <div id="upload-tab" class="tab-content">
+                <h2>Upload Media Content</h2>
+                
+                <div class="step">
+                    <div class="step-title">
+                        <span class="step-number">1</span>
+                        Select Media Files
+                    </div>
+                    <div class="form-group">
+                        <div class="file-upload">
+                            <input type="file" id="media-files" multiple accept="image/*,video/*">
+                            <label for="media-files" class="file-upload-label">
+                                <div>📁 Click to select media files or drag & drop</div>
+                                <small>Supported: Images (JPEG, PNG, GIF, WebP, SVG) and Videos (MP4, WebM, OGG, AVI)</small>
+                            </label>
+                        </div>
+                        <div id="file-preview" class="file-preview"></div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <div class="file-upload">
-                        <input type="file" id="media-files" multiple accept="image/*,video/*">
-                        <label for="media-files" class="file-upload-label">
-                            <div>📁 Click to select media files or drag & drop</div>
-                            <small>Supported: Images (JPEG, PNG, GIF, WebP, SVG) and Videos (MP4, WebM, OGG, AVI)</small>
+
+                <div class="step">
+                    <div class="step-title">
+                        <span class="step-number">2</span>
+                        Select Location
+                    </div>
+                    <div id="locations-container">
+                        <button type="button" id="load-locations" class="btn btn-secondary" onclick="loadLocations()">
+                            Load Locations
+                        </button>
+                        <div id="locations-grid" class="locations-grid"></div>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-title">
+                        <span class="step-number">3</span>
+                        Select Displays
+                    </div>
+                    <div id="displays-container" style="display: none;">
+                        <div id="displays-grid" class="displays-grid"></div>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-title">
+                        <span class="step-number">4</span>
+                        Upload Options
+                    </div>
+                    <div class="override-section">
+                        <div class="override-warning">⚠️ Override Playlist Option</div>
+                        <label>
+                            <input type="checkbox" id="override-playlist" class="checkbox">
+                            Replace existing playlist content with new media (this will remove all current content from selected displays)
                         </label>
                     </div>
-                    <div id="file-preview" class="file-preview"></div>
-                </div>
-            </div>
-
-            <div class="step">
-                <div class="step-title">
-                    <span class="step-number">2</span>
-                    Select Location
-                </div>
-                <div id="locations-container">
-                    <button type="button" id="load-locations" class="btn btn-secondary" onclick="loadLocations()">
-                        Load Locations
+                    <button type="button" id="upload-btn" class="btn btn-primary" onclick="uploadMedia()" disabled>
+                        Upload Media
                     </button>
-                    <div id="locations-grid" class="locations-grid"></div>
                 </div>
-            </div>
 
-            <div class="step">
-                <div class="step-title">
-                    <span class="step-number">3</span>
-                    Select Displays
+                <div class="upload-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill"></div>
+                    </div>
+                    <div class="progress-text">Uploading...</div>
                 </div>
-                <div id="displays-container" style="display: none;">
-                    <div id="displays-grid" class="displays-grid"></div>
-                </div>
-            </div>
 
-            <div class="step">
-                <div class="step-title">
-                    <span class="step-number">4</span>
-                    Upload Options
-                </div>
-                <div class="override-section">
-                    <div class="override-warning">⚠️ Override Playlist Option</div>
-                    <label>
-                        <input type="checkbox" id="override-playlist" class="checkbox">
-                        Replace existing playlist content with new media (this will remove all current content from selected displays)
-                    </label>
-                </div>
-                <button type="button" id="upload-btn" class="btn btn-primary" onclick="uploadMedia()" disabled>
-                    Upload Media
-                </button>
+                <div id="upload-result"></div>
             </div>
-
-            <div class="upload-progress">
-                <div class="progress-bar">
-                    <div class="progress-fill"></div>
-                </div>
-                <div class="progress-text">Uploading...</div>
-            </div>
-
-            <div id="upload-result"></div>
         </div>
     </div>
 
@@ -476,9 +563,153 @@
         let selectedLocation = null;
         let selectedDisplays = [];
         let selectedFiles = [];
+        let currentUser = null;
+        let authToken = null;
         
         // API base URL - adjust this to match your backend
         const API_BASE = 'http://localhost:8000';
+
+        // Check for existing token on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('auth_token');
+            const username = localStorage.getItem('username');
+            if (token && username) {
+                authToken = token;
+                currentUser = username;
+                showMainApp();
+            }
+        });
+
+        // Authentication functions
+        async function login(username, password) {
+            try {
+                const formData = new FormData();
+                formData.append('username', username);
+                formData.append('password', password);
+
+                const response = await fetch(`${API_BASE}/token`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    authToken = data.access_token;
+                    currentUser = username;
+                    
+                    // Store token and username in localStorage
+                    localStorage.setItem('auth_token', authToken);
+                    localStorage.setItem('username', username);
+                    
+                    showMainApp();
+                    return { success: true };
+                } else {
+                    throw new Error(data.detail || 'Login failed');
+                }
+            } catch (error) {
+                return { success: false, error: error.message };
+            }
+        }
+
+        function logout() {
+            authToken = null;
+            currentUser = null;
+            localStorage.removeItem('auth_token');
+            localStorage.removeItem('username');
+            
+            // Reset application state
+            selectedLocation = null;
+            selectedDisplays = [];
+            selectedFiles = [];
+            
+            showLoginForm();
+            resetForms();
+        }
+
+        function showMainApp() {
+            document.getElementById('login-section').classList.add('hidden');
+            document.getElementById('main-app').classList.remove('hidden');
+            document.getElementById('welcome-message').textContent = `Welcome, ${currentUser}!`;
+        }
+
+        function showLoginForm() {
+            document.getElementById('main-app').classList.add('hidden');
+            document.getElementById('login-section').classList.remove('hidden');
+            document.getElementById('login-form').reset();
+            document.getElementById('login-result').innerHTML = '';
+        }
+
+        function resetForms() {
+            document.getElementById('register-form').reset();
+            document.getElementById('register-result').innerHTML = '';
+            document.getElementById('media-files').value = '';
+            document.getElementById('file-preview').innerHTML = '';
+            document.getElementById('locations-grid').innerHTML = '';
+            document.getElementById('displays-grid').innerHTML = '';
+            document.getElementById('displays-container').style.display = 'none';
+            document.getElementById('override-playlist').checked = false;
+            document.getElementById('load-locations').style.display = 'inline-block';
+            document.getElementById('upload-result').innerHTML = '';
+            updateUploadButton();
+        }
+
+        // Helper function to make authenticated requests
+        async function makeAuthenticatedRequest(url, options = {}) {
+            if (!authToken) {
+                throw new Error('Not authenticated');
+            }
+
+            const headers = {
+                'Authorization': `Bearer ${authToken}`,
+                ...options.headers
+            };
+
+            const response = await fetch(url, {
+                ...options,
+                headers
+            });
+
+            if (response.status === 401) {
+                // Token expired or invalid
+                logout();
+                throw new Error('Authentication expired. Please login again.');
+            }
+
+            return response;
+        }
+
+        // Login form submission
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const submitButton = e.target.querySelector('button[type="submit"]');
+            const originalText = submitButton.textContent;
+            
+            submitButton.innerHTML = '<span class="loading"></span> Signing In...';
+            submitButton.disabled = true;
+
+            const result = await login(username, password);
+            
+            if (result.success) {
+                document.getElementById('login-result').innerHTML = `
+                    <div class="alert alert-success" style="margin-top: 15px;">
+                        <strong>Success!</strong> Welcome back!
+                    </div>
+                `;
+            } else {
+                document.getElementById('login-result').innerHTML = `
+                    <div class="alert alert-error" style="margin-top: 15px;">
+                        <strong>Error:</strong> ${result.error}
+                    </div>
+                `;
+            }
+
+            submitButton.textContent = originalText;
+            submitButton.disabled = false;
+        });
 
         // Tab switching
         function showTab(tabName) {
@@ -500,7 +731,7 @@
             };
 
             try {
-                const response = await fetch(`${API_BASE}/register`, {
+                const response = await makeAuthenticatedRequest(`${API_BASE}/register`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -575,7 +806,7 @@
             button.disabled = true;
 
             try {
-                const response = await fetch(`${API_BASE}/admin/locations`);
+                const response = await makeAuthenticatedRequest(`${API_BASE}/admin/locations`);
                 const data = await response.json();
                 
                 if (response.ok) {
@@ -622,7 +853,7 @@
 
         async function loadDisplaysForLocation(location) {
             try {
-                const response = await fetch(`${API_BASE}/admin/display_by_location/${encodeURIComponent(location)}`);
+                const response = await makeAuthenticatedRequest(`${API_BASE}/admin/display_by_location/${encodeURIComponent(location)}`);
                 const data = await response.json();
                 
                 if (response.ok) {
@@ -717,6 +948,9 @@
             try {
                 const xhr = new XMLHttpRequest();
                 
+                // Add authorization header
+                xhr.setRequestHeader('Authorization', `Bearer ${authToken}`);
+                
                 xhr.upload.addEventListener('progress', (e) => {
                     if (e.lengthComputable) {
                         const percentComplete = (e.loaded / e.total) * 100;
@@ -730,6 +964,9 @@
                         const result = JSON.parse(xhr.responseText);
                         displayUploadResult(result);
                         resetUploadForm();
+                    } else if (xhr.status === 401) {
+                        logout();
+                        throw new Error('Authentication expired. Please login again.');
                     } else {
                         throw new Error(`Upload failed with status ${xhr.status}`);
                     }
@@ -740,6 +977,7 @@
                 });
 
                 xhr.open('POST', `${API_BASE}/admin/upload_media`);
+                xhr.setRequestHeader('Authorization', `Bearer ${authToken}`);
                 xhr.send(formData);
 
             } catch (error) {
