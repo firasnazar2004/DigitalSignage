@@ -138,7 +138,12 @@
             padding: 10px;
             
         }
-
+        .home-text{
+            
+        }
+        .home-logo{
+            margin-top: auto;
+        }
         /* Navigation Tabs */
         .nav-tabs {
             display: flex;
@@ -381,7 +386,51 @@
         }
 
         
+        /* File Upload */
+        .file-upload-zone {
+            border: 2px dashed var(--neutral-300);
+            border-radius: var(--border-radius);
+            padding: 48px 24px;
+            text-align: center;
+            background: var(--neutral-100);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
 
+        .file-upload-zone:hover {
+            border-color: var(--primary-color);
+            background: rgb(59 130 246 / 0.05);
+        }
+
+        .file-upload-zone.dragover {
+            border-color: var(--primary-color);
+            background: rgb(59 130 246 / 0.1);
+            transform: scale(1.02);
+        }
+
+        .file-upload-zone.has-file {
+            border-color: var(--success-color);
+            background: rgb(5 150 105 / 0.05);
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: var(--neutral-400);
+            margin-bottom: 16px;
+        }
+
+        .upload-text {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--neutral-700);
+            margin-bottom: 8px;
+        }
+
+        .upload-subtext {
+            font-size: 0.875rem;
+            color: var(--neutral-500);
+        }
 
         /* Buttons */
         .btn {
@@ -426,7 +475,7 @@
                 <ul class="sidebar-list">
                     <li  class= "sidebar-home">
                         <img src="data:image/svg+xml,%3csvg%20width='26'%20height='32'%20viewBox='0%200%2026%2032'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20d='M6.25%2020.2188H13.75M9.42048%208.67598L2.92048%2013.0717C2.65668%2013.2501%202.5%2013.5389%202.5%2013.8467V22.0735C2.5%2022.8613%203.17157%2023.5%204%2023.5H16C16.8284%2023.5%2017.5%2022.8613%2017.5%2022.0735V13.8467C17.5%2013.5389%2017.3433%2013.2501%2017.0795%2013.0717L10.5795%208.67598C10.2326%208.44134%209.76744%208.44134%209.42048%208.67598Z'%20stroke='black'%20stroke-width='1.25'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3c/svg%3e" alt="nav.home" class="home-logo">
-                        <span>الرئيسية</span>
+                        <span class="home-text">الرئيسية</span>
                     </li>
                     <li class="sidebar-devices">
                         <img src="assets/Icon Wrapper.png" alt ="nav-devices" class="devices-logo">
@@ -894,6 +943,199 @@
                 buttonText.textContent = originalText;
             }
         }
+
+            // File Upload Handling
+        function handleFileSelection() {
+            const fileInput = document.getElementById('media-file');
+            
+            const files = Array.from(fileInput.files);
+            AppState.selectedFiles = files;
+            
+            if (files.length > 0) {
+                updateFileDisplay(files);
+                document.getElementById('next-to-location').disabled = false;
+            } else {
+                AppState.selectedFiles = [];
+                document.getElementById('file-info').classList.add('hidden');
+                document.getElementById('file-drop-zone').classList.remove('has-file');
+                document.getElementById('next-to-location').disabled = true;
+            }
+        }
+
+        function handleDragOver(event) {
+            event.preventDefault();
+            event.currentTarget.classList.add('dragover');
+        }
+
+        function handleDragLeave(event) {
+            event.currentTarget.classList.remove('dragover');
+        }
+
+        function handleFileDrop(event) {
+            event.preventDefault();
+            event.currentTarget.classList.remove('dragover');
+            
+            const files = event.dataTransfer.files;
+            if (files.length > 0) {
+                const fileInput = document.getElementById('media-file');
+                fileInput.files = files; 
+                handleFileSelection(); 
+            }
+        }
+        
+        function removeFile(index) {
+            const newFiles = [...AppState.selectedFiles];
+            newFiles.splice(index, 1);
+            
+            const dataTransfer = new DataTransfer();
+            newFiles.forEach(file => dataTransfer.items.add(file));
+            
+            document.getElementById('media-file').files = dataTransfer.files;
+            handleFileSelection();
+        }
+
+        function updateFileDisplay(files) {
+            const dropZone = document.getElementById('file-drop-zone');
+            const fileInfoContainer = document.getElementById('file-info');
+            
+            dropZone.classList.add('has-file');
+            fileInfoContainer.innerHTML = '';
+            
+            files.forEach((file, index) => {
+                const fileIcon = getFileIcon(file.type);
+                const fileSize = formatFileSize(file.size);
+                
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                fileItem.innerHTML = `
+                    <div class="file-details">
+                        <div class="file-icon">
+                            <i class="${fileIcon}"></i>
+                        </div>
+                        <div class="file-name-size">
+                            <div class="file-name" title="${file.name}">${file.name}</div>
+                            <div class="file-size">${fileSize}</div>
+                        </div>
+                    </div>
+                    <button type="button" class="remove-file-btn" onclick="removeFile(${index})">
+                        <i class="fas fa-times-circle"></i>
+                    </button>
+                `;
+                fileInfoContainer.appendChild(fileItem);
+            });
+
+            fileInfoContainer.classList.remove('hidden');
+        }
+
+        function getFileIcon(fileType) {
+            if (fileType.startsWith('image/')) return 'fas fa-image';
+            if (fileType.startsWith('video/')) return 'fas fa-video';
+            return 'fas fa-file';
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        // Media Upload
+        async function executeMediaUpload() {
+            const files = AppState.selectedFiles;
+
+            if (files.length === 0 || AppState.selectedDisplays.length === 0) {
+                showAlert('upload-alerts', 
+                    'Please select at least one media file and one target display before proceeding.', 
+                    'error'
+                );
+                return;
+            }
+
+            const uploadButton = document.getElementById('upload-media-btn');
+            const buttonText = uploadButton.querySelector('.btn-text');
+            const originalText = buttonText.textContent;
+
+            try {
+                uploadButton.disabled = true;
+                buttonText.innerHTML = '<div class="loading-spinner"></div> Uploading & Deploying...';
+                
+                showAlert('upload-alerts', 
+                    'Uploading media file(s) and deploying to selected displays. This may take a few moments...', 
+                    'info'
+                );
+
+                const formData = new FormData();
+                files.forEach(file => {
+                    formData.append('files', file);
+                });
+                
+                AppState.selectedDisplays.forEach(uuid => {
+                    formData.append('display_uuids', uuid);
+                });
+
+                const response = await fetch(`${API_BASE_URL}/admin/upload_media`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showAlert('upload-alerts', 
+                        `Media successfully uploaded and deployed to ${AppState.selectedDisplays.length} display(s).`, 
+                        'success'
+                    );
+                    
+                    setTimeout(resetUploadForm, 3000);
+                } else {
+                    showAlert('upload-alerts', 
+                        `Upload failed: ${result.detail || result.message || 'Unknown error occurred'}`, 
+                        'error'
+                    );
+                }
+
+            } catch (error) {
+                console.error('Upload error:', error);
+                showAlert('upload-alerts', 
+                    'Network error: Unable to upload media. Please check your connection and try again.', 
+                    'error'
+                );
+            } finally {
+                uploadButton.disabled = false;
+                buttonText.textContent = originalText;
+            }
+        }
+
+        function resetUploadForm() {
+            AppState.selectedFiles = [];
+            AppState.selectedDisplays = [];
+            AppState.currentStep = 1;
+            
+            // Reset file input
+            const fileInput = document.getElementById('media-file');
+            fileInput.value = '';
+            document.getElementById('file-drop-zone').classList.remove('has-file');
+            document.getElementById('file-info').classList.add('hidden');
+            document.getElementById('next-to-location').disabled = true;
+            
+            // Reset step indicators
+            updateStepIndicators(1);
+            
+            // Show first step
+            document.querySelectorAll('.upload-step').forEach(step => step.classList.add('hidden'));
+            document.getElementById('upload-content-1').classList.remove('hidden');
+            
+            // Clear alerts
+            document.getElementById('upload-alerts').innerHTML = '';
+
+            // Deselect display cards
+            document.querySelectorAll('.display-card.selected').forEach(card => {
+                card.classList.remove('selected');
+            });
+        }
+
 
 </script>
 
