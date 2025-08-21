@@ -6,7 +6,7 @@ from uuid import uuid4, UUID
 from pydantic import BaseModel
 from passlib.context import CryptContext
 from typing import List, Optional, Annotated, Dict, Any
-from datetime import datetime , timedelta
+from datetime import datetime , timedelta   
 from sqlmodel import Session, select, col, delete
 from fastapi.security import APIKeyHeader
 from backend.app.models import Display, DisplayPlaylist, Media, PlaylistMediaLink, User , verify_password, get_password_hash
@@ -17,7 +17,7 @@ from fastapi.security import OAuth2PasswordBearer , OAuth2PasswordRequestForm
 from jose import JWTError, jwt 
 
 api_key_header = APIKeyHeader(name="X-API-KEY", auto_error=False)
-SECRET_KEY = os.environ.get("SECRET_KEY")
+SECRET_KEY = "402511c7e38c4ebd1812a20af2c8c3a618bfe2037d50446db1f0dedac3e8e06d"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30 
 
@@ -169,7 +169,7 @@ async def login_for_access_token(form_data : Annotated[OAuth2PasswordRequestForm
 # ---------------- Upload Media ----------------
 @router.post("/admin/upload_media", response_model=List[UploadMediaResponse])
 async def upload_media(
-    current_user: Annotated[User, Depends(get_current_user)],
+   # current_user: Annotated[User, Depends(get_current_user)],
     files: List[UploadFile] = File(...),
     display_uuids: Optional[List[UUID]] = Form(None),
     override_playlist: bool = Form(False),
