@@ -1,4 +1,5 @@
 **/.DS_Store
+/backend/app/script.py
 /backend/app/storage/media/
 /backend/app/__pycache__/
 /firmware/smartTV/digital_signage_app/*
