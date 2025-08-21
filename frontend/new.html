@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول - Digital Signage</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            min-height: 100vh;
+            display: flex;
+            direction: rtl;
+        }
+
+        .container {
+            display: flex;
+            width: 100%;
+            min-height: 100vh;
+        }
+
+        .form-section {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            background: #ffffff;
+            /* Add this to allow for absolute positioning of the logo */
+            position: relative; 
+        }
+
+        .image-section {
+            flex: 1;
+            background: linear-gradient(135deg, #1e3a5f 0%, #2c5282 100%);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cubes-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            perspective: 1000px;
+        }
+
+        .cube {
+            position: absolute;
+            background: linear-gradient(45deg, #4a90e2, #63b3ed);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            animation: float 6s ease-in-out infinite;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .cube:nth-child(1) { width: 80px; height: 80px; top: 10%; left: 15%; animation-delay: 0s; }
+        .cube:nth-child(2) { width: 120px; height: 120px; top: 20%; right: 20%; animation-delay: 1s; }
+        .cube:nth-child(3) { width: 60px; height: 60px; top: 40%; left: 10%; animation-delay: 2s; }
+        .cube:nth-child(4) { width: 100px; height: 100px; top: 60%; right: 15%; animation-delay: 3s; }
+        .cube:nth-child(5) { width: 70px; height: 70px; top: 70%; left: 25%; animation-delay: 4s; }
+        .cube:nth-child(6) { width: 90px; height: 90px; top: 30%; left: 50%; animation-delay: 0.5s; }
+        .cube:nth-child(7) { width: 110px; height: 110px; top: 50%; right: 40%; animation-delay: 1.5s; }
+        .cube:nth-child(8) { width: 65px; height: 65px; top: 80%; right: 30%; animation-delay: 2.5s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotateX(0deg) rotateY(0deg); }
+            25% { transform: translateY(-20px) rotateX(10deg) rotateY(10deg); }
+            50% { transform: translateY(-10px) rotateX(-5deg) rotateY(15deg); }
+            75% { transform: translateY(-15px) rotateX(5deg) rotateY(-10deg); }
+        }
+
+        .login-form {
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: #4a90e2;
+            border-radius: 6px;
+            margin-left: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        .logo-img {
+            position: absolute;
+            top: 2rem; /* Adds space from the top */
+            left: 30rem; /* Positions to the top-right in an RTL context */
+            display: block; /* Ensures the div behaves as a block element */
+        }
+
+        .logo-img img {
+            width: 200px; /* Adjust the logo size as needed */
+            height: auto;
+        }
+
+        .login-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #4a5568;
+            margin-bottom: 0.5rem;
+        }
+
+        .required {
+            color: #e53e3e;
+        }
+
+        .input-container {
+            position: relative;
+        }
+
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.2s;
+            direction: ltr;
+            text-align: right;
+        }
+
+        input[type="text"]:focus, input[type="password"]:focus {
+            outline: none;
+            border-color: #4a90e2;
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+        }
+
+        .password-toggle {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #718096;
+            font-size: 1.2rem;
+        }
+
+        .forgot-password {
+            color: #4a90e2;
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 2rem;
+            display: inline-block;
+        }
+
+        .forgot-password:hover {
+            text-decoration: underline;
+        }
+
+        .login-button {
+            width: 100%;
+            background: #4a90e2;
+            color: white;
+            border: none;
+            padding: 0.875rem 1rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-button:hover {
+            background: #357abd;
+            transform: translateY(-1px);
+        }
+
+        .login-button:disabled {
+            background: #cbd5e0;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading {
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 0.5rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .divider {
+            text-align: center;
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #e2e8f0;
+        }
+
+        .divider span {
+            background: white;
+            padding: 0 1rem;
+            color: #718096;
+            font-size: 0.875rem;
+        }
+
+        .create-account {
+            color: #4a90e2;
+            text-decoration: underline;
+            font-weight: 500;
+        }
+
+        .error-message {
+            background: #fed7d7;
+            color: #c53030;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            display: none;
+        }
+
+        .success-message {
+            background: #c6f6d5;
+            color: #2f855a;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .image-section {
+                min-height: 200px;
+                order: 2;
+            }
+            
+            .form-section {
+                order: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="container">
+        <div class="form-section">
+            
+            <div class="login-form">
+                <div class="logo-img">
+                    <img src="assets/logo-black.png">
+                </div>
+
+                <h1 class="login-title">تسجيل الدخول</h1>
+
+                <div id="errorMessage" class="error-message"></div>
+                <div id="successMessage" class="success-message"></div>
+
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="username">اسم المستخدم<span class="required">*</span></label>
+                        <input type="text" id="username" name="username" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">كلمة المرور<span class="required">*</span></label>
+                        <div class="input-container">
+                            <input type="password" id="password" name="password" required>
+                            <button type="button" class="password-toggle" onclick="togglePassword()">👁️</button>
+                        </div>
+                    </div>
+
+                    <a href="#" class="forgot-password">هل نسيت كلمة المرور؟</a>
+
+                    <button type="submit" class="login-button" id="loginBtn">
+                        <span>تسجيل الدخول</span>
+                    </button>
+                </form>
+
+                <div class="divider">
+                    <span>أو إنشاء حساب جديد</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="image-section">
+            
+            <img src="assets/login-pic.png">
+        </div>
+    </div>
+
+<script>
+    function togglePassword() {
+        const passwordInput = document.getElementById('password');
+        const toggleBtn = document.querySelector('.password-toggle');
+        
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            toggleBtn.textContent = '🙈';
+        } else {
+            passwordInput.type = 'password';
+            toggleBtn.textContent = '👁️';
+        }
+    }
+
+    function showMessage(message, type = 'error') {
+        const errorDiv = document.getElementById('errorMessage');
+        const successDiv = document.getElementById('successMessage');
+        
+        if (type === 'error') {
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            successDiv.style.display = 'none';
+        } else {
+            successDiv.textContent = message;
+            successDiv.style.display = 'block';
+            errorDiv.style.display = 'none';
+        }
+        
+        setTimeout(() => {
+            errorDiv.style.display = 'none';
+            successDiv.style.display = 'none';
+        }, 5000);
+    }
+
+    function setLoading(isLoading) {
+        const loginBtn = document.getElementById('loginBtn');
+        const btnText = loginBtn.querySelector('span');
+        
+        if (isLoading) {
+            loginBtn.disabled = true;
+            btnText.textContent = 'جاري تسجيل الدخول...';
+            loginBtn.insertAdjacentHTML('beforeend', '<div class="loading"></div>');
+        } else {
+            loginBtn.disabled = false;
+            btnText.textContent = 'تسجيل الدخول';
+            const loading = loginBtn.querySelector('.loading');
+            if (loading) loading.remove();
+        }
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value;
+        
+        if (!username || !password) {
+            showMessage('يرجى ملء جميع الحقول المطلوبة', 'error');
+            return;
+        }
+
+        setLoading(true);
+
+        try {
+            // Create URLSearchParams (OAuth2PasswordRequestForm requires this format)
+            const params = new URLSearchParams();
+            params.append('username', username);
+            params.append('password', password);
+
+            const response = await fetch('http://localhost:8000/token', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: params,
+                credentials: 'include'
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                // Store the token
+                const token = data.access_token;
+                window.authToken = token;
+
+                showMessage('تم تسجيل الدخول بنجاح!', 'success');
+
+                // Redirect to dashboard or main app
+                setTimeout(() => {
+                    window.location.href = 'dhaher.html';
+                }, 1500);
+            } else {
+                let errorMessage = 'حدث خطأ في تسجيل الدخول';
+                if (response.status === 401) {
+                    errorMessage = 'اسم المستخدم أو كلمة المرور غير صحيحة';
+                } else if (data.detail) {
+                    errorMessage = data.detail;
+                }
+                showMessage(errorMessage, 'error');
+            }
+        } catch (error) {
+            console.error('Login error:', error);
+            showMessage('حدث خطأ في الاتصال بالخادم', 'error');
+        } finally {
+            setLoading(false);
+        }
+    });
+
+    // Keep the cube and input animations
+    document.querySelectorAll('.cube').forEach((cube, index) => {
+        cube.style.animationDelay = `${index * 0.5}s`;
+        cube.addEventListener('mouseenter', function() {
+            this.style.transform = 'scale(1.1) rotateY(45deg)';
+            this.style.transition = 'transform 0.3s ease';
+        });
+        cube.addEventListener('mouseleave', function() {
+            this.style.transform = '';
+        });
+    });
+
+    const inputs = document.querySelectorAll('input');
+    inputs.forEach(input => {
+        input.addEventListener('focus', function() {
+            this.parentElement.style.transform = 'translateY(-2px)';
+            this.parentElement.style.transition = 'transform 0.2s ease';
+        });
+        input.addEventListener('blur', function() {
+            this.parentElement.style.transform = '';
+        });
+    });
+</script>
+</body>
+</html>
