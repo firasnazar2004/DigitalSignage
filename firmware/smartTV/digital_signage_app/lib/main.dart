@@ -354,7 +354,7 @@ class _SignageDisplayState extends State<SignageDisplay> with TickerProviderStat
   // Configuration
   static const String DISPLAY_UUID = "fa0c54d1-ba73-4797-95f6-9596d2ec5079";
   static const String API_KEY = "649418f4-1a93-4a0b-875d-50c905846d1f";
-  static const String BACKEND_BASE_URL = "http://192.168.100.120:8000";
+  static const String BACKEND_BASE_URL = "http://192.168.100.159:8000";
   static const int POLL_INTERVAL_SECONDS = 5;
   static const int IMAGE_DISPLAY_DURATION_SECONDS = 5;
 
@@ -446,26 +446,24 @@ class _SignageDisplayState extends State<SignageDisplay> with TickerProviderStat
     }
   }
 
-  Future<void> _initializeApp() async {
+Future<void> _initializeApp() async {
     try {
-      if (!PlaylistManager.isPlaylistLoaded) {
-        _startPolling();
-      } else {
-        _startMediaRotation();
-      }
+      // Always start the polling mechanism to check for new media.
+      _startPolling();
     } catch (e) {
       print("Initialization error: ${e.toString()}");
     }
   }
 
-  void _startPolling() {
+void _startPolling() {
+    _pollTimer?.cancel(); // Cancel any existing timer to prevent duplicates
     _pollTimer = Timer.periodic(Duration(seconds: POLL_INTERVAL_SECONDS), (timer) {
       _synchronizeMedia();
     });
+    // Call it immediately once to avoid waiting for the first interval.
     _synchronizeMedia();
   }
-
-  Future<void> _synchronizeMedia() async {
+Future<void> _synchronizeMedia() async {
     try {
       final response = await http.get(
         Uri.parse('$BACKEND_BASE_URL/displays/$DISPLAY_UUID/sync'),
@@ -474,7 +472,9 @@ class _SignageDisplayState extends State<SignageDisplay> with TickerProviderStat
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> responseBody = json.decode(response.body);
-        final List<dynamic> newMedia = responseBody['new_media'];
+        final syncData = responseBody['sync_data'];
+        final List<dynamic> newMedia = syncData['new_media'];
+        final bool shouldOverride = syncData['override_playlist'] ?? false; // Check for override flag
 
         if (newMedia.isNotEmpty) {
           final newMediaItems = newMedia
@@ -483,16 +483,30 @@ class _SignageDisplayState extends State<SignageDisplay> with TickerProviderStat
                   mediaType: item['type']))
               .toList();
 
+          if (shouldOverride) {
+            // If the override flag is true, clear the existing playlist.
+            print("Override detected. Clearing existing playlist.");
+            PlaylistManager.playlist.clear();
+          }
+
           PlaylistManager.playlist.addAll(newMediaItems);
           PlaylistManager.isPlaylistLoaded = true;
 
           final List<String> newMediaIds = newMedia.map<String>((item) => item['id']).toList();
           await _markMediaAsDownloaded(newMediaIds);
 
+          // Restart the playlist from the beginning to show the new media immediately.
           PlaylistManager.currentIndex = 0;
           _startMediaRotation();
         } else {
-          _startMediaRotation();
+          // If no new media, but a playlist is already loaded, just start rotation.
+          if (PlaylistManager.isPlaylistLoaded) {
+            _startMediaRotation();
+          } else {
+            // If the playlist is not loaded yet, wait and try again.
+            print("No new media found on backend. Waiting for a new upload.");
+            _pollTimer = Timer(Duration(seconds: POLL_INTERVAL_SECONDS), _synchronizeMedia);
+          }
         }
       } else {
         print("Sync error: status code ${response.statusCode}");
@@ -501,7 +515,6 @@ class _SignageDisplayState extends State<SignageDisplay> with TickerProviderStat
       print("Sync error: ${e.toString()}");
     }
   }
-
   Future<void> _markMediaAsDownloaded(List<String> mediaIds) async {
     try {
       await http.post(

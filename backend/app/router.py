@@ -42,7 +42,6 @@ class UploadMediaResponse(BaseModel):
     media_type: str
     size: int
     assigned_displays: List[UUID] = []
-    # MODIFIED: ADD THE OVERRIDE FLAG TO THE RESPONSE MODEL
     override : bool
 
 class AssignMediaRequest(BaseModel):
@@ -180,7 +179,6 @@ async def upload_media(
     if not files:
         raise HTTPException(status_code=400, detail="No files uploaded.")
 
-    # MODIFIED: TRACK PLAYLISTS THAT HAVE BEEN CLEARED FOR OVERRIDE
     cleared_playlists = set()
 
     for file in files:
@@ -235,7 +233,6 @@ async def upload_media(
                 if not display_playlist:
                     continue
 
-                # MODIFIED: ONLY CLEAR PLAYLIST ONCE PER DISPLAY WHEN OVERRIDE IS TRUE
                 if override_playlist and display_uuid not in cleared_playlists:
                     session.exec(delete(PlaylistMediaLink).where(PlaylistMediaLink.display_playlist_id == display_playlist.id))
                     display_playlist.current_index = 0
@@ -243,14 +240,12 @@ async def upload_media(
                     session.add(display_playlist)
                     cleared_playlists.add(display_uuid)
 
-                # Check if the media is already linked to this playlist
                 existing_link = session.exec(
                     select(PlaylistMediaLink)
                     .where(PlaylistMediaLink.display_playlist_id == display_playlist.id)
                     .where(PlaylistMediaLink.media_id == media.id)
                 ).first()
 
-                # MODIFIED: IF LINK EXISTS AND IS NOT OVERRIDE, MARK AS NEW
                 if existing_link and not override_playlist:
                     existing_link.is_new = True
                     session.add(existing_link)
@@ -271,7 +266,6 @@ async def upload_media(
                     media_id=media.id,
                     order=next_order,
                     is_new=True,
-                    # MODIFIED: SET THE OVERRIDE FLAG IN THE DATABASE
                     override=override_playlist
                 )
                 session.add(playlist_link)
@@ -289,7 +283,6 @@ async def upload_media(
             media_type=media.media_type,
             size=media.size,
             assigned_displays=assigned_uuids,
-            # MODIFIED: RETURN THE OVERRIDE FLAG
             override=override_playlist
         ))
     
@@ -374,12 +367,10 @@ async def display_sync(uuid: UUID, session: Session = Depends(get_session), disp
             "new_media": []
         }
 
-    # MODIFIED: GET ALL LINKS THAT ARE MARKED AS NEW
     new_media_links = session.exec(
         select(PlaylistMediaLink).where(PlaylistMediaLink.display_playlist_id == display_playlist.id, PlaylistMediaLink.is_new == True).order_by(PlaylistMediaLink.order)
     ).all()
 
-    # ADDED: GET ALL LINKS TO RETURN A CORRECT COUNT
     playlist_links = session.exec(
         select(PlaylistMediaLink).where(PlaylistMediaLink.display_playlist_id == display_playlist.id).order_by(PlaylistMediaLink.order)
     ).all()
@@ -393,7 +384,6 @@ async def display_sync(uuid: UUID, session: Session = Depends(get_session), disp
                 "url": f"/media/{media_item.id}",
                 "type": media_item.media_type,
                 "original_filename": media_item.original_filename,
-                # MODIFIED: RETURN THE OVERRIDE FLAG FROM THE DATABASE
                 "override": link.override
             })
 
