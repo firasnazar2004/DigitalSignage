@@ -6,8 +6,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&display=swap" rel="stylesheet">
-    <link rel="icon" type="image/x-icon" href="assets/favicon-16x16.png">
-    <title>Dhaher</title>   
+    <link rel="icon" type="image/x-icon" href="assets/Logo Option 4 (Arabic).svg">
+    <title>ظاهر</title>   
     <style>
         :root {
             --primary-color: #1e40af;
@@ -125,7 +125,7 @@
             flex-shrink: 0;
             width: 280px;
             min-width: 280px;
-            padding-top: 32px;
+            
             
         }
         .sidebar-content{
@@ -138,15 +138,129 @@
         }
         .sidebar-list {
             list-style-type: none;
-            padding: 10px;
+            padding:23px;
             
+        }
+        .sidebar-home{
+            display:flex;
+            align-items: center;
+            margin-top:24px;
+            margin-bottom:24px;
+        }
+        .sidebar-devices{
+            display:flex;
+            align-items: center;
+            margin-top:24px;
+            margin-bottom:24px;
+        }
+        .sidebar-analytics{
+            display:flex;
+            align-items: center;
+            margin-top:24px;
+            margin-bottom:24px;
+        }
+        .sidebar-settings{
+            display:flex;
+            align-items: center;
+            margin-top:24px;
+            margin-bottom:24px;
         }
         .home-text{
             
         }
         .home-logo{
             margin-top: auto;
+            
         }
+
+        .nav-home-btn{
+            background-color: rgba(205, 205, 205, 1);
+            width: auto;
+            font-family: 'Almarai';
+            padding: 15px;
+            padding-left:110px;
+
+            width: 200px;
+            border-color:  rgba(205, 205, 205, 1) ;
+            border-style: none;
+            border-radius: 10px;
+        }
+        .nav-home-btn:hover{
+            cursor:pointer;
+            background-color: rgb(161, 158, 158);
+            
+        }
+        .nav-home-btn:active{
+            background-color: rgb(157, 155, 155);
+        }
+
+
+        .nav-devices-btn{
+            
+            background-color: rgba(205, 205, 205, 1);
+            width: auto;
+            font-family: 'Almarai';
+            padding: 15px;
+            padding-left:110px;
+
+            width: 200px;
+            border-color:  rgba(205, 205, 205, 1) ;
+            border-style: none;
+            border-radius: 10px;
+        }
+        .nav-devices-btn:hover{
+            cursor:pointer;
+            background-color: rgb(161, 158, 158);
+            
+        }
+        .nav-devices-btn:active{
+            background-color: rgb(157, 155, 155);
+        }
+        .nav-analytics-btn{
+            background-color: rgba(205, 205, 205, 1);
+            width: auto;
+            font-family: 'Almarai';
+            padding: 15px;
+            padding-left:110px;
+
+            width: 200px;
+            border-color:  rgba(205, 205, 205, 1) ;
+            border-style: none;
+            border-radius: 10px;
+        }
+        .nav-analytics-btn:hover{
+            cursor:pointer;
+            background-color: rgb(161, 158, 158);
+            
+        }
+        .nav-analytics-btn:active{
+            background-color: rgb(157, 155, 155);
+        }
+        .nav-settings-btn{
+            background-color: rgba(205, 205, 205, 1);
+            width: auto;
+            font-family: 'Almarai';
+            padding: 15px;
+            padding-left:110px;
+
+            width: 200px;
+            border-color:  rgba(205, 205, 205, 1) ;
+            border-style: none;
+            border-radius: 10px;
+        }
+        .nav-settings-btn:hover{
+            cursor:pointer;
+            background-color: rgb(161, 158, 158);
+            
+        }
+        .nav-settings-btn:active{
+            background-color: rgb(157, 155, 155);
+        }
+
+
+
+
+
         /* Navigation Tabs */
         .nav-tabs {
             display: flex;
@@ -160,8 +274,9 @@
         }
 
         .nav-tab {
+            font-family: 'Almarai';
             flex: 1;
-            padding: 16px 24px;
+            padding: 16px 24px; 
             border: none;
             background: transparent;
             color: var(--neutral-600);
@@ -321,6 +436,7 @@
 
         /* Forms */
         .form-section {
+
             margin-bottom: 32px;
         }
 
@@ -703,7 +819,7 @@
         }
 
         .alert-info {
-            background: rgb(235,138,0);
+            background: rgb(239,168,67);
             color: #1e40af;
             border-color: #bfdbfe;
         }
@@ -818,6 +934,62 @@
             }
 
             
+
+
+
+            .overrideArea{
+        font-family: 'Almarai';
+        background: rgb(239, 236, 236);
+        border-radius: 15px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        padding: 32px;
+        border-style: solid;
+        border-color: rgb(255,59,48);
+        width: fit-content;
+    }
+    .warning-imgg {
+        margin-top: 12;
+        vertical-align: middle;
+    }
+    .override-alert {
+        background: rgb(255,59,48);
+        border-radius: 15px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        padding: 12px;
+        color:white;
+        display:flex;
+        align-items: center;
+        gap:2px
+    }
+    .upload-media-alert-first-message{
+        margin: 10px;
+    }
+    button{
+        font-family: 'Almarai';
+    }
+    .override-btn{
+        background: black;
+        color:white;
+        border-radius: 7px;
+        padding: 10px;
+        text-align: center;
+    }
+    .append-btn{
+        background: black;
+        color:white;
+        border-radius: 7px;
+        padding: 10px;
+        text-align: center;
+    }
+    .upload-cancel-btn{
+        background: white;
+        color:black;
+        border-radius: 7px;
+        padding: 10px;
+        text-align: center;
+    }
         }
     </style>
 </head>
@@ -835,22 +1007,31 @@
         <div class="side-bar">
             <div class ="sidebar-content">
                 <ul class="sidebar-list">
-                    <li  class= "sidebar-home">
-                        
-                        <img src="data:image/svg+xml,%3csvg%20width='26'%20height='32'%20viewBox='0%200%2026%2032'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20d='M6.25%2020.2188H13.75M9.42048%208.67598L2.92048%2013.0717C2.65668%2013.2501%202.5%2013.5389%202.5%2013.8467V22.0735C2.5%2022.8613%203.17157%2023.5%204%2023.5H16C16.8284%2023.5%2017.5%2022.8613%2017.5%2022.0735V13.8467C17.5%2013.5389%2017.3433%2013.2501%2017.0795%2013.0717L10.5795%208.67598C10.2326%208.44134%209.76744%208.44134%209.42048%208.67598Z'%20stroke='black'%20stroke-width='1.25'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3c/svg%3e" alt="nav.home" class="home-logo">
-                        <span class="home-text">الرئيسية</span>
-                    </li>
+                    <nav class="home-nav">
+                        <li  class= "sidebar-home">
+                            <button class="nav-home-btn">
+                                <img src="data:image/svg+xml,%3csvg%20width='26'%20height='32'%20viewBox='0%200%2026%2032'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20d='M6.25%2020.2188H13.75M9.42048%208.67598L2.92048%2013.0717C2.65668%2013.2501%202.5%2013.5389%202.5%2013.8467V22.0735C2.5%2022.8613%203.17157%2023.5%204%2023.5H16C16.8284%2023.5%2017.5%2022.8613%2017.5%2022.0735V13.8467C17.5%2013.5389%2017.3433%2013.2501%2017.0795%2013.0717L10.5795%208.67598C10.2326%208.44134%209.76744%208.44134%209.42048%208.67598Z'%20stroke='black'%20stroke-width='1.25'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3c/svg%3e" alt="nav.home" class="home-logo">
+                                <span class="home-text">الرئيسية</span>
+                            </button>
+                        </li>
+                    </nav>
                     <li class="sidebar-devices">
-                        <img src="assets/Icon Wrapper.png" alt ="nav-devices" class="devices-logo">
-                        <span>الأجهزة</span>
+                        <button class="nav-devices-btn">
+                            <img src="assets/Icon Wrapper.png" alt ="nav-devices" class="devices-logo">
+                            <span>الأجهزة</span>
+                        </button>
                     </li>
                     <li class="sidebar-analytics">
-                        <img src="assets/analytics.png" alt ="nav-analytics" class="analytics">
-                        <span>لوحة البيانات</span>
+                        <button class="nav-analytics-btn">
+                            <img src="assets/analytics.png" alt ="nav-analytics" class="analytics">
+                            <span>لوحة البيانات</span>
+                        </button>
                     </li>
-                    <li class="sidebar-analytics">
-                        <svg alt= "nav-settings" class="settings-logo" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none"><path stroke="#1A1A1A" stroke-linecap="round" d="M9.118 2.878c-.285-1.17-1.95-1.17-2.236 0a1.15 1.15 0 0 1-1.714.71c-1.03-.626-2.207.551-1.58 1.58a1.15 1.15 0 0 1-.71 1.715c-1.17.285-1.17 1.95 0 2.234a1.15 1.15 0 0 1 .71 1.715c-.627 1.03.55 2.207 1.58 1.58a1.148 1.148 0 0 1 1.715.71c.284 1.17 1.95 1.17 2.234 0a1.15 1.15 0 0 1 1.715-.71c1.03.627 2.207-.55 1.58-1.58a1.149 1.149 0 0 1 .71-1.715c1.17-.284 1.17-1.95 0-2.234a1.148 1.148 0 0 1-.71-1.715c.627-1.029-.55-2.206-1.58-1.58a1.15 1.15 0 0 1-1.715-.71h0Z" clip-rule="evenodd"></path><path stroke="#1A1A1A" stroke-linecap="round" d="M9.333 8a1.333 1.333 0 1 1-2.666 0 1.333 1.333 0 0 1 2.666 0Z"></path></svg>                    
-                        <span>الإعدادات</span>
+                    <li class="sidebar-settings">
+                        <button class="nav-settings-btn">
+                            <svg alt= "nav-settings" class="settings-logo" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none"><path stroke="#1A1A1A" stroke-linecap="round" d="M9.118 2.878c-.285-1.17-1.95-1.17-2.236 0a1.15 1.15 0 0 1-1.714.71c-1.03-.626-2.207.551-1.58 1.58a1.15 1.15 0 0 1-.71 1.715c-1.17.285-1.17 1.95 0 2.234a1.15 1.15 0 0 1 .71 1.715c-.627 1.03.55 2.207 1.58 1.58a1.148 1.148 0 0 1 1.715.71c.284 1.17 1.95 1.17 2.234 0a1.15 1.15 0 0 1 1.715-.71c1.03.627 2.207-.55 1.58-1.58a1.149 1.149 0 0 1 .71-1.715c1.17-.284 1.17-1.95 0-2.234a1.148 1.148 0 0 1-.71-1.715c.627-1.029-.55-2.206-1.58-1.58a1.15 1.15 0 0 1-1.715-.71h0Z" clip-rule="evenodd"></path><path stroke="#1A1A1A" stroke-linecap="round" d="M9.333 8a1.333 1.333 0 1 1-2.666 0 1.333 1.333 0 0 1 2.666 0Z"></path></svg>                    
+                            <span>الإعدادات</span>
+                        </button>
                     </li>
                 </ul>
             </div>
@@ -1041,6 +1222,7 @@
                                             <i class="fas fa-arrow-right"></i>
                                             التالي
                                         </button>
+                                    
                                     </div>
                                 </div>
 
@@ -1129,8 +1311,29 @@
             </div>
         </div>
     </div>
+        <div id="override-popup" class="override-popup" style="display:none;">
+            <div class="override-alert">
+                <img class="warning-img" src="assets/warning.svg">
+                <strong>إنتباه!!</strong>
+            </div>
 
-
+            <div class="override-main-area">
+                <div class="upload-media-alert-first-message">
+                <strong>لقد إخترت شاشات لديها ميديا قديمة</strong>
+                </div>
+                <br>
+                <div class="upload-media-alert-second-message">
+                <span class="upload-media-alert-second-message">
+                    هل تريد إعادة كتابة ملفات الشاشة بالمرفقات الجديدة، أو إضافتها إلي الملفات الموجودة في الشاشة؟
+                </span>
+                </div>
+                <br>
+                <button id="btn-override" class="override-btn">إعادة كتابة</button>
+                <button id="btn-append" class="append-btn">إضافة إلي ملفات الشاشة</button>
+                <button id="btn-cancel" class="upload-cancel-btn">إلغاء</button>
+            </div>
+        </div>
+  
 
     
 
@@ -1172,33 +1375,11 @@
             }
         }
 
-        function toggleDarkMode() {
-            if (AppState.darkMode) {
-                enableLightMode();
-            } else {
-                enableDarkMode();
-            }
-        }
+        
 
-        function enableDarkMode() {
-            document.documentElement.setAttribute('data-theme', 'dark');
-            AppState.darkMode = true;
-            localStorage.setItem('theme', 'dark');
-            
-            // Update toggle button icon
-            const slider = document.querySelector('.theme-toggle-slider i');
-            slider.className = 'fas fa-moon';
-        }
+        
 
-        function enableLightMode() {
-            document.documentElement.setAttribute('data-theme', 'light');
-            AppState.darkMode = false;
-            localStorage.setItem('theme', 'light');
-            
-            // Update toggle button icon
-            const slider = document.querySelector('.theme-toggle-slider i');
-            slider.className = 'fas fa-sun';
-        }
+        
 
         async function initializeApp() {
             try {
@@ -1257,6 +1438,24 @@
                     }
                 }
             });
+            document.getElementById('upload-media-btn').addEventListener('click', () => {
+                document.getElementById('override-popup').style.display = 'block';
+            });
+
+            document.getElementById('btn-override').addEventListener('click', () => {
+                document.getElementById('override-popup').style.display = 'none';
+                executeMediaUpload(true); 
+            });
+
+            document.getElementById('btn-append').addEventListener('click', () => {
+                document.getElementById('override-popup').style.display = 'none';
+                executeMediaUpload(false);
+            });
+
+            document.getElementById('btn-cancel').addEventListener('click', () => {
+                document.getElementById('override-popup').style.display = 'none';
+            });
+            
         }
 
         // Tab Management
@@ -1562,7 +1761,7 @@
             const card = document.createElement('div');
             card.className = 'display-card';
             card.dataset.uuid = display.uuid;
-            
+            card.dataset.mac = display.mac;
             card.innerHTML = `
                 <div class="display-card-header">
                     <div class="display-name">${display.name}</div>
@@ -1571,11 +1770,11 @@
                 <div class="display-info">
                     <div class="display-detail">
                         <i class="fas fa-fingerprint display-detail-icon"></i>
-                        UUID: ${display.uuid.substring(0, 8)}...
+                        UUID: ${display.uuid}
                     </div>
                     <div class="display-detail">
                         <i class="fas fa-network-wired display-detail-icon"></i>
-                        MAC: ${display.mac || 'Not specified'}
+                        MAC: ${display.mac }
                     </div>
                 </div>
             `;
@@ -1598,7 +1797,8 @@
         }
 
         // Media Upload
-        async function executeMediaUpload() {
+        // Media Upload
+        async function executeMediaUpload(overrideFlag) {
             const files = AppState.selectedFiles;
 
             if (files.length === 0 || AppState.selectedDisplays.length === 0) {
@@ -1615,21 +1815,20 @@
 
             try {
                 uploadButton.disabled = true;
-                buttonText.innerHTML = '<div class="loading-spinner"></div> Uploading & Deploying...';
+                buttonText.innerHTML = '<div class="loading-spinner"></div> ....جاري رفع الميديا';
                 
-                showAlert('upload-alerts', 
-                    'Uploading media file(s) and deploying to selected displays. This may take a few moments...', 
-                    'info'
-                );
+                showAlert('upload-alerts', '....جاري رفع الميديا', 'info');
 
                 const formData = new FormData();
                 files.forEach(file => {
                     formData.append('files', file);
                 });
-                
                 AppState.selectedDisplays.forEach(uuid => {
                     formData.append('display_uuids', uuid);
                 });
+
+                
+                formData.append('override_playlist', overrideFlag ? "true" : "false");
 
                 const response = await fetch(`${API_BASE_URL}/admin/upload_media`, {
                     method: 'POST',
@@ -1640,10 +1839,9 @@
 
                 if (response.ok) {
                     showAlert('upload-alerts', 
-                        `Media successfully uploaded and deployed to ${AppState.selectedDisplays.length} display(s).`, 
+                        `تم رفع الميديا إلي ${AppState.selectedDisplays.length} شاشات بنجاح`, 
                         'success'
                     );
-                    
                     setTimeout(resetUploadForm, 3000);
                 } else {
                     showAlert('upload-alerts', 
@@ -1651,7 +1849,6 @@
                         'error'
                     );
                 }
-
             } catch (error) {
                 console.error('Upload error:', error);
                 showAlert('upload-alerts', 
@@ -1663,7 +1860,8 @@
                 buttonText.textContent = originalText;
             }
         }
-
+        
+        
         function resetUploadForm() {
             AppState.selectedFiles = [];
             AppState.selectedDisplays = [];

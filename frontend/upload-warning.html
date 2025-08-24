@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&display=swap" rel="stylesheet">
+
+    <title>Document</title>
+</head>
+<style>
+     .almarai-light {
+            font-family: "Almarai", sans-serif;
+            font-weight: 300;
+            font-style: normal;
+            }
+
+            .almarai-regular {
+            font-family: "Almarai", sans-serif;
+            font-weight: 400;
+            font-style: normal;
+            }
+
+            .almarai-bold {
+            font-family: "Almarai", sans-serif;
+            font-weight: 700;
+            font-style: normal;
+            }
+
+            .almarai-extrabold {
+            font-family: "Almarai", sans-serif;
+            font-weight: 800;
+            font-style: normal;
+            }
+
+    
+    .overrideArea{
+        font-family: 'Almarai';
+        background: rgb(239, 236, 236);
+        border-radius: 15px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        padding: 32px;
+        border-style: solid;
+        border-color: rgb(255,59,48);
+        width: fit-content;
+    }
+    .warning-imgg {
+        margin-top: 12;
+        vertical-align: middle;
+    }
+    .override-alert {
+        background: rgb(255,59,48);
+        border-radius: 15px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        padding: 12px;
+        color:white;
+        display:flex;
+        align-items: center;
+        gap:2px
+    }
+    .upload-media-alert-first-message{
+        margin: 10px;
+    }
+    button{
+        font-family: 'Almarai';
+    }
+    .override-btn{
+        background: black;
+        color:white;
+        border-radius: 7px;
+        padding: 10px;
+        text-align: center;
+    }
+    .append-btn{
+        background: black;
+        color:white;
+        border-radius: 7px;
+        padding: 10px;
+        text-align: center;
+    }
+    .upload-cancel-btn{
+        background: white;
+        color:black;
+        border-radius: 7px;
+        padding: 10px;
+        text-align: center;
+    }
+</style>
+<body>
+    
+</body>
+</html>
+<div class = "overrideArea">
+    
+    <div class = 'override-alert'>
+        <img class ='warning-img' src="assets/warning.svg">
+        <strong>
+            إنتباه!!
+        </strong>
+    </div>
+
+    <div class="override-main-area">
+        <div class="upload-media-alert-first-message">
+            <strong >
+            لقد إخترت شاشات لديها ميديا قديمة 
+            </strong>
+        </div>
+        <br>
+        <div class="upload-media-alert-second-message">
+            <span class="upload-media-alert-second-message">
+                هل تريد إعادة كتابة ملفات الشاشة بالمرفقات الجديدة، أو إضافتها إلي الملفات الموجودة في الشاشة؟
+            </span>
+        </div>
+        <br>
+        <button class="override-btn">إعادة كتابة</button> 
+        <button class="append-btn">إضافة إلي ملفات الشاشة</button>
+        <button class="upload-cancel-btn">إلغاء</button>
+
+    </div>
+
+</div>
