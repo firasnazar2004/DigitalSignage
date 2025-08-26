@@ -956,6 +956,7 @@
             align-items: center;
             opacity: 0;
             pointer-events: none;
+            padding:15px;
             transition: opacity 0.3s ease;
             z-index: 9999;
             }
@@ -967,8 +968,9 @@
             border-radius: 15px;
             padding: 32px;
             border: 2px solid rgb(255,59,48);
-            width: 400px;
+            width: 650px;
             max-width: 90%;
+            padding-left:45px;
             transform: scale(0.85);
             opacity: 0;
             transition: transform 0.3s ease, opacity 0.3s ease;
@@ -1360,7 +1362,7 @@
 
     </div>
 
-    <div class="overlay" id="override-popup">
+    <!-- <div class="overlay" id="override-popup">
       <div class="overrideArea">
         <div class="override-alert">
           <img src="assets/warning.svg" alt="تحذير">
@@ -1380,7 +1382,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
 
 <script>
     // Configuration
@@ -1409,11 +1411,7 @@
         const savedTheme = localStorage.getItem('theme');
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         
-        if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
-            enableDarkMode();
-        } else {
-            enableLightMode();
-        }
+       
     }
 
     
@@ -1447,10 +1445,19 @@
         AppState.connectionStatus = status;
         const statusElement = document.getElementById('connection-status');
         const statusTextElement = document.getElementById('status-text');
-        
-        statusElement.className = `status-indicator ${status}`;
-        statusTextElement.textContent = text;
+
+        // Guard DOM usage so missing elements don't crash the script
+        if (statusElement) {
+            statusElement.className = `status-indicator ${status}`;
+        }
+        if (statusTextElement) {
+            statusTextElement.textContent = text;
+        }
     }
+
+    function handleLocationChange(e) {
+        document.getElementById('next-to-displays').disabled = !e.target.value;
+        }
 
     function setupEventListeners() {
         // Register form submission
@@ -1488,45 +1495,67 @@
                 showAlert('upload-alerts', 'Please select at least one display', 'error');
                 return;
             }
-            document.getElementById('override-popup').style.display = 'block';
-            });
-
+            document.getElementById('override-popup').classList.add('active');
+        });
 
         document.getElementById('btn-override').addEventListener('click', () => {
-        document.getElementById('override-popup').style.display = 'none';
-        executeMediaUpload(true);   // override
+            document.getElementById('override-popup').classList.remove('active');
+            executeMediaUpload(true);
         });
 
         document.getElementById('btn-append').addEventListener('click', () => {
-        document.getElementById('override-popup').style.display = 'none';
-        executeMediaUpload(false);  // append
+            document.getElementById('override-popup').classList.remove('active');
+            executeMediaUpload(false);
         });
 
         document.getElementById('btn-cancel').addEventListener('click', () => {
-        document.getElementById('override-popup').style.display = 'none';
+            document.getElementById('override-popup').classList.remove('active');
         });
+
+
+
+        
         
     }
 
     // Tab Management
-    function switchTab(tabName) {
-        // Update tab buttons
-        document.querySelectorAll('.nav-tab').forEach(tab => {
-            tab.classList.remove('active');
-        });
-        event.target.classList.add('active');
+    // function switchTab(tabName) {
+    //     // Update tab buttons
+    //     document.querySelectorAll('.nav-tab').forEach(tab => {
+    //         tab.classList.remove('active');
+    //     });
+    //     event.target.classList.add('active');
         
-        // Update content panels
-        document.querySelectorAll('.content-panel').forEach(panel => {
-            panel.classList.add('hidden');
-        });
-        document.getElementById(`${tabName}-panel`).classList.remove('hidden');
+    //     // Update content panels
+    //     document.querySelectorAll('.content-panel').forEach(panel => {
+    //         panel.classList.add('hidden');
+    //     });
+    //     document.getElementById(`${tabName}-panel`).classList.remove('hidden');
         
-        // Load tab-specific data
-        if (tabName === 'analytics') {
-            loadAnalyticsData();
-        }
+    //     // Load tab-specific data
+    //     if (tabName === 'analytics') {
+    //         loadAnalyticsData();
+    //     }
+    // }
+        function switchTab(tabName) {
+    // Remove active from all buttons
+    document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+
+    // Find the corresponding tab button (matches onclick attribute)
+    const btn = Array.from(document.querySelectorAll('.nav-tab')).find(b => {
+        const on = b.getAttribute('onclick') || '';
+        return on.includes(`'${tabName}'`) || on.includes(`"${tabName}"`);
+    });
+    if (btn) btn.classList.add('active');
+
+    // Switch panels
+    document.querySelectorAll('.content-panel').forEach(panel => panel.classList.add('hidden'));
+    const panel = document.getElementById(`${tabName}-panel`);
+    if (panel) panel.classList.remove('hidden');
+
+    if (tabName === 'analytics') loadAnalyticsData();
     }
+
 
     // Display Registration
     async function handleDisplayRegistration(event) {
@@ -1639,15 +1668,23 @@
     }
     
     function removeFile(index) {
-        const newFiles = [...AppState.selectedFiles];
-        newFiles.splice(index, 1);
-        
-        const dataTransfer = new DataTransfer();
-        newFiles.forEach(file => dataTransfer.items.add(file));
-        
-        document.getElementById('media-file').files = dataTransfer.files;
-        handleFileSelection();
+    const newFiles = [...AppState.selectedFiles];
+    newFiles.splice(index, 1);
+
+    const fileInput = document.getElementById('media-file');
+    const dataTransfer = new DataTransfer();
+    newFiles.forEach(file => dataTransfer.items.add(file));
+
+    if (newFiles.length === 0) {
+        fileInput.value = '';
+    } else {
+        fileInput.files = dataTransfer.files;
     }
+
+    // Update AppState and UI
+    handleFileSelection();
+}
+
 
     function updateFileDisplay(files) {
         const dropZone = document.getElementById('file-drop-zone');
@@ -1673,7 +1710,7 @@
                     </div>
                 </div>
                 <button type="button" class="remove-file-btn" onclick="removeFile(${index})">
-                    <i class="fas fa-times-circle"></i>
+                    <img class="remove-file-btn" src="assets/trash-01.svg">
                 </button>
             `;
             fileInfoContainer.appendChild(fileItem);
@@ -1846,25 +1883,9 @@
         uploadButton.disabled = AppState.selectedDisplays.length === 0;
     }
 
-            // OPEN POPUP on "تحميل و نشر الميديا"
-    document.getElementById("uploadButton").addEventListener("click", function() {
-    document.getElementById("override-popup").style.display = "block";
-    });
+    
 
-    // HANDLE POPUP BUTTONS
-    document.getElementById("btn-override").addEventListener("click", function() {
-    uploadMedia(true);  // call with override
-    closePopup();
-    });
-
-    document.getElementById("btn-append").addEventListener("click", function() {
-    uploadMedia(false); // call without override
-    closePopup();
-    });
-
-    document.getElementById("btn-cancel").addEventListener("click", function() {
-    closePopup();
-    });
+    
 
     function closePopup() {
     document.getElementById("override-popup").style.display = "none";
@@ -2059,9 +2080,7 @@
                 container.innerHTML = '';
             }, 5000);
         }
-    document.getElementById('upload-media-btn').addEventListener('click', function() {
-    document.getElementById('override-popup').style.display = 'flex';
-});
+    
 
     
     }
