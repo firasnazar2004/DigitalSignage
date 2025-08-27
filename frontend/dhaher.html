@@ -1362,6 +1362,7 @@
                                             <div style="font-size: 2rem; font-weight: 700; color: var(--neutral-900); margin-bottom: 4px;" id="total-media">-</div>
                                             <div style="color: var(--neutral-600); font-size: 0.875rem;"> المرفقات المرفوعة</div>
                                         </div>
+                                        <img src="assets/graph.svg">
                                     </div>
                                 </div>
                             </div>
@@ -2000,12 +2001,27 @@
     // Analytics
     async function loadAnalyticsData() {
         try {
+
+
             // This would typically load from multiple endpoints
             // For now, we'll show placeholder data
-            document.getElementById('total-displays').textContent = '12';
+
+            const resp1 = await fetch(`${API_BASE_URL}/analytics/number_of_displays`, {
+            });
+            const data1 = await resp1.json()
+
+            const resp2 = await fetch(`${API_BASE_URL}/analytics/number_of_locations`, {
+            });
+            const data2 = await resp2.json()
+
+            const resp3 = await fetch(`${API_BASE_URL}/analytics/number_of_media_files`, {
+            });
+            const data3 = await resp3.json()
+
+            document.getElementById('total-displays').textContent = data1.number_of_displays;
             document.getElementById('active-displays').textContent = '11';
-            document.getElementById('total-locations').textContent = '4';
-            document.getElementById('total-media').textContent = '28';
+            document.getElementById('total-locations').textContent = data2.number_of_locations;
+            document.getElementById('total-media').textContent = data3.number_of_media_files;
         } catch (error) {
             console.error('Failed to load analytics:', error);
         }

@@ -7,7 +7,7 @@ from pydantic import BaseModel
 from passlib.context import CryptContext
 from typing import List, Optional, Annotated, Dict, Any
 from datetime import datetime , timedelta   
-from sqlmodel import Session, select, col, delete
+from sqlmodel import Session, select, col, delete, func
 from fastapi.security import APIKeyHeader
 from backend.app.models import Display, DisplayPlaylist, Media, PlaylistMediaLink, User , verify_password, get_password_hash
 from backend.app.db import get_session
@@ -428,6 +428,23 @@ async def get_specific_media(media_id: UUID, session: Session = Depends(get_sess
 
 
 # ----------------- Analytics Section -------------------
-@router.get('displays/number_of_displays')
-async def number_of_displays():
-    return 
+@router.get('/analytics/number_of_displays')
+async def number_of_displays(session: Session=Depends(get_session)):
+    displayNumber = session.exec(select(func.count(Display.uuid))).first()
+    return {"number_of_displays":displayNumber}
+
+
+@router.get('/analytics/number_of_locations')
+async def number_of_locations(session: Session=Depends(get_session)):
+    locationNumber = session.exec(select(func.count(func.distinct(Display.location)))).first()
+    return {"number_of_locations":locationNumber}
+
+@router.get('/analytics/number_of_media_files')
+async def number_of_media_files(session: Session=Depends(get_session)):
+    fileNumber = session.exec(select(func.count(func.distinct(Media.sha256_hash)))).first()
+    return {"number_of_media_files":fileNumber}
+
+@router.get('/analytics/number_of_active_displays')
+async def number_of_active_displays(session: Session = Depends(get_session)):
+    
+    return
