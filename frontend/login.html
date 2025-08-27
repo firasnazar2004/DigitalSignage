@@ -232,7 +232,7 @@
         }
 
         .login-button:hover {
-            background: #357abd;
+            background: #1E293B;
             transform: translateY(-1px);
         }
 
@@ -339,7 +339,7 @@
 
                 <form id="loginForm">
                     <div class="form-group">
-                        <label for="username">اسم المستخدم<span class="required">*</span></label>
+                        <label for="username">البريد الإلكتروني<span class="required">*</span></label>
                         <input type="text" id="username" name="username" required>
                     </div>
 
@@ -460,7 +460,7 @@
                 // Redirect to dashboard or main app
                 setTimeout(() => {
                     window.location.href = 'dhaher.html';
-                }, 1500);
+                }, 850);
             } else {
                 let errorMessage = 'حدث خطأ في تسجيل الدخول';
                 if (response.status === 401) {

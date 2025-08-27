@@ -136,7 +136,7 @@
         }
         .sidebar-content{
            background: rgb(205, 205, 205, 1);
-           box-shadow: -4px 0 6px -1px rgba(0, 0, 0, 0.15),
+           box-shadow: -4px 0 6px -1px rgba(131, 130, 130, 0.15),
                 -2px 0 4px -2px rgba(0, 0, 0, 0.1);
            height: 100%;
            
@@ -178,7 +178,7 @@
             margin-top: auto;
             
         }
-
+        
         .nav-home-btn{
             background-color: rgba(205, 205, 205, 1);
             width: auto;
@@ -186,19 +186,25 @@
             padding: 15px;
             padding-left:110px;
 
-            width: 200px;
+            width: 400px;
             border-color:  rgba(205, 205, 205, 1) ;
             border-style: none;
-            border-radius: 10px;
+            border-radius: 21px;
         }
         .nav-home-btn:hover{
             cursor:pointer;
-            background-color: rgb(161, 158, 158);
+            background: #1E293B;
+            color:white;
             
         }
         .nav-home-btn:active{
-            background-color: rgb(157, 155, 155);
+            background: #1E293B;
+            color:white;
         }
+        .nav-home-btn:hover .home-logo,
+            .nav-home-btn:active .home-logo {
+            filter: brightness(0) invert(1);
+            }
 
 
         .nav-devices-btn{
@@ -209,19 +215,26 @@
             padding: 15px;
             padding-left:110px;
 
-            width: 200px;
+            width: 400px;
             border-color:  rgba(205, 205, 205, 1) ;
             border-style: none;
-            border-radius: 10px;
+            border-radius: 21px;
         }
         .nav-devices-btn:hover{
             cursor:pointer;
-            background-color: rgb(161, 158, 158);
+            background: #1E293B;
+            color:white;
             
         }
         .nav-devices-btn:active{
-            background-color: rgb(157, 155, 155);
+            background: #1E293B;
+            color:white;
         }
+        .nav-devices-btn:hover .devices-logo,
+            .nav-devices-btn:active .devices-logo {
+            filter: brightness(0) invert(1);
+            }
+
         .nav-analytics-btn{
             background-color: rgba(205, 205, 205, 1);
             width: auto;
@@ -229,19 +242,28 @@
             padding: 15px;
             padding-left:110px;
 
-            width: 200px;
+            width: 400px;
             border-color:  rgba(205, 205, 205, 1) ;
             border-style: none;
-            border-radius: 10px;
+            border-radius: 21px;
         }
         .nav-analytics-btn:hover{
             cursor:pointer;
-            background-color: rgb(161, 158, 158);
+            background: #1E293B;
+            color:white;
             
         }
         .nav-analytics-btn:active{
-            background-color: rgb(157, 155, 155);
+            background: #1E293B;
+            color:white;
         }
+        .nav-analytics-btn:hover .analytics-logo,
+            .nav-analytics-btn:active .analytics-logo {
+            filter: brightness(0) invert(1);
+            }
+
+
+
         .nav-settings-btn{
             background-color: rgba(205, 205, 205, 1);
             width: auto;
@@ -249,23 +271,37 @@
             padding: 15px;
             padding-left:110px;
 
-            width: 200px;
+            width: 400px;
             border-color:  rgba(205, 205, 205, 1) ;
             border-style: none;
-            border-radius: 10px;
+            border-radius: 21px;
         }
         .nav-settings-btn:hover{
             cursor:pointer;
-            background-color: rgb(161, 158, 158);
+            background: #1E293B;
+            color:white;
             
         }
         .nav-settings-btn:active{
-            background-color: rgb(157, 155, 155);
+            background: #1E293B;
+            color:white;
         }
+        .nav-settings-btn:hover .settings-logo,
+            .nav-settings-btn:active .settings-logo {
+            filter: brightness(0) invert(1);
+            }
 
 
 
-
+        .nav-home-btn,
+        .nav-devices-btn,
+        .nav-analytics-btn,
+        .nav-settings-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center; /* This may be optional depending on your desired spacing */
+        gap: 10px; /* Adjust this value for spacing between the icon and text */
+        }
 
         /* Navigation Tabs */
         .nav-tabs {
@@ -400,7 +436,7 @@
             max-width: 1400px;
             height : 100%;
             margin: 0 auto;
-            padding: 32px 24px;
+            padding: 32px 24px ;
             width: 100%;
             flex: 1;
             box-shadow: -4px 0 6px -1px rgba(23, 22, 22, 0.15),
@@ -1039,13 +1075,13 @@
                         </nav>
                         <li class="sidebar-devices">
                             <button class="nav-devices-btn">
-                                <img src="assets/Icon Wrapper.png" alt ="nav-devices" class="devices-logo">
+                                <img src="assets/devices-icon.svg" alt ="nav-devices" class="devices-logo">
                                 <span>الأجهزة</span>
                             </button>
                         </li>
                         <li class="sidebar-analytics">
                             <button class="nav-analytics-btn">
-                                <img src="assets/analytics.png" alt ="nav-analytics" class="analytics">
+                                <img src="assets/analytics-icon.svg" alt ="nav-analytics" class="analytics-logo">
                                 <span>لوحة البيانات</span>
                             </button>
                         </li>
@@ -1065,17 +1101,17 @@
                 <div class="main-panel">
                     <nav class = "nav-tabs">
                     <button class="nav-tab active" onclick="switchTab('register')">
-                            <img src="assets/display_icon.png" id="display-icon">
+                            <img src="assets/displays-icon.svg" id="display-icon">
                             <i class="fas fa-tv"></i>
                             تسجيل شاشة جديدة
                         </button>
                         <button class="nav-tab" onclick="switchTab('upload')">
-                            <img src="assets/upload_icon.png" id = "upload-icon">
+                            <img src="assets/upload-icon.svg" id = "upload-icon">
                             <i class="fas fa-cloud-upload-alt"></i>
                             تعيين الميديا 
                         </button>
                         <button class="nav-tab" onclick="switchTab('analytics')">
-                            <img src = "assets/analytics.png" id = "analytics_icon">
+                            <img src = "assets/analytics-icon.svg" id = "analytics_icon">
                             <i class="fas fa-chart-bar"></i>
                             لوحة البيانات
                         </button>

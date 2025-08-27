@@ -168,7 +168,7 @@ async def login_for_access_token(form_data : Annotated[OAuth2PasswordRequestForm
 # ---------------- Upload Media ----------------
 @router.post("/admin/upload_media", response_model=List[UploadMediaResponse])
 async def upload_media(
-   # current_user: Annotated[User, Depends(get_current_user)],
+    #current_user: Annotated[User, Depends(get_current_user)],
     files: List[UploadFile] = File(...),
     display_uuids: Optional[List[UUID]] = Form(None),
     override_playlist: bool = Form(False),
@@ -425,3 +425,9 @@ async def get_specific_media(media_id: UUID, session: Session = Depends(get_sess
         raise HTTPException(status_code=404, detail=f"Media ID {media_id} not found or file missing")
 
     return FileResponse(media_item.filepath_on_disk, media_type= media_item.content_type)
+
+
+# ----------------- Analytics Section -------------------
+@router.get('displays/number_of_displays')
+async def number_of_displays():
+    return 
