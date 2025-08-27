@@ -1342,7 +1342,7 @@
                                             </div>
                                             <img src="assets/active-display-icon.svg">
                                             <div style="font-size: 2rem; font-weight: 700; color: var(--neutral-900); margin-bottom: 4px;" id="active-displays">-</div>
-                                            <div style="color: var(--neutral-600); font-size: 0.875rem;"> الشاشات التشطة</div>
+                                            <div style="color: var(--neutral-600); font-size: 0.875rem;"> الشاشات النشطة</div>
                                         </div>
                                         
                                         <div style="background: var(--neutral-100); border: 1px solid var(--neutral-200); border-radius: var(--border-radius); padding: 24px; text-align: center; transition: all 0.3s ease;">
@@ -2018,8 +2018,13 @@
             });
             const data3 = await resp3.json()
 
+            const resp4 = await fetch(`${API_BASE_URL}/analytics/number_of_active_displays`, {
+            });
+            const data4 = await resp4.json()
+            
+
             document.getElementById('total-displays').textContent = data1.number_of_displays;
-            document.getElementById('active-displays').textContent = '11';
+            document.getElementById('active-displays').textContent = data4.number_of_active_displays;
             document.getElementById('total-locations').textContent = data2.number_of_locations;
             document.getElementById('total-media').textContent = data3.number_of_media_files;
         } catch (error) {

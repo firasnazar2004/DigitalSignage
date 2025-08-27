@@ -17,6 +17,7 @@ class Display(SQLModel, table = True):
     location: str
     api_key: str = Field(default_factory=lambda: str(uuid4()))
     registered_at: datetime = Field(default_factory=datetime.now)
+    last_active: Optional[datetime] = Field(default=None, nullable=True) 
 
     playlist_link: Optional["DisplayPlaylist"] = Relationship(back_populates="display")
 

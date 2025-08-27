@@ -355,6 +355,9 @@ async def display_sync(uuid: UUID, session: Session = Depends(get_session), disp
     if display.uuid != uuid:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid API key for this uuid")
 
+    display.last_active = datetime.now()
+    session.add(display)
+    session.commit()
     display_playlist = session.exec(
         select(DisplayPlaylist).where(DisplayPlaylist.display_uuid == uuid)
     ).first()
@@ -446,5 +449,7 @@ async def number_of_media_files(session: Session=Depends(get_session)):
 
 @router.get('/analytics/number_of_active_displays')
 async def number_of_active_displays(session: Session = Depends(get_session)):
-    
-    return
+    current_time = datetime.now()
+    threshold = current_time - timedelta(seconds=10)
+    active_displays = session.exec(select (func.count(Display.uuid)).where(Display.last_active > threshold)).first()
+    return {'number_of_active_displays':active_displays}
