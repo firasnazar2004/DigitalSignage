@@ -450,6 +450,6 @@ async def number_of_media_files(session: Session=Depends(get_session)):
 @router.get('/analytics/number_of_active_displays')
 async def number_of_active_displays(session: Session = Depends(get_session)):
     current_time = datetime.now()
-    threshold = current_time - timedelta(seconds=10)
+    threshold = current_time - timedelta(seconds=330)
     active_displays = session.exec(select (func.count(Display.uuid)).where(Display.last_active > threshold)).first()
     return {'number_of_active_displays':active_displays}
