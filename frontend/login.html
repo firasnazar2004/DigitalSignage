@@ -435,6 +435,9 @@
                 const token = data.access_token;
                 window.authToken = token;
 
+      
+                console.log("Saving username:", username);
+                localStorage.setItem('username', username); 
                 showMessage('تم تسجيل الدخول بنجاح!', 'success');
 
                 // Redirect to dashboard or main app

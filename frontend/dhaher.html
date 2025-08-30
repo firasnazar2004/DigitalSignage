@@ -149,6 +149,25 @@
             cursor: pointer;       
             outline: none; 
         }
+        .profile-section{
+           
+        }
+        .username-text{
+            font-family: 'ALmarai';
+            font-size: large;   
+            color: white;
+            margin-bottom: 20rem;
+            
+        }
+        .profile-btn{
+            border: none;         
+            background: none;      
+            padding: 0;            
+            margin: 0;             
+            cursor: pointer;       
+            outline: none;
+            margin-right:20px; 
+        }
         .logout-btn:hover .logout-img {
             opacity: 0.8;
             transform: scale(1.05);
@@ -157,6 +176,11 @@
             opacity: 0.8;
             transform: scale(1.05);
         }
+        .profile-btn:hover .profile-img {
+            opacity: 0.8;
+            transform: scale(1.05);
+        }
+        
         .body-content-wrapper {
             display:flex;
             flex-direction: row;
@@ -353,6 +377,58 @@
         gap: 10px; /* Adjust this value for spacing between the icon and text */
         }
 
+        /* Top Section */
+        .top-section{
+            padding-right: 11px;
+        }
+        .welcome-txt{
+            font-family: 'Almarai';
+            font-size: 40px;
+        }
+        .filter-by{
+            display: flex;
+            align-items: center; 
+            gap: 10px; 
+        }
+        select{
+            border-radius: 15px;
+            padding: 12px;
+            width:110px;
+            
+        }
+        .top-overview{
+            margin-top: 10px;
+        }
+        .top-overview-txt{
+            font-size: larger;
+            margin-left: 11px;
+        }
+        .top-overview-more-details:hover{
+            color: blue;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        .download-top-section{
+            
+            
+          
+            
+        }
+        .download-btn{
+            border: none;         
+            background: none;      
+            padding: 0;            
+            margin: 0;             
+            cursor: pointer;       
+            outline: none;
+        }
+         .download-btn:hover .download-img {
+            opacity: 0.8;
+            transform: scale(1.05);
+        }
+
+
         /* Navigation Tabs */
         .nav-tabs {
             display: flex;
@@ -494,6 +570,7 @@
 
         }
         .app-container {
+            font-family: 'Almarai';
             border-radius: 200px;
             width:100%;
             height:100%;
@@ -505,6 +582,7 @@
 
         /* Content Panel*/
         .main-panel {
+            margin-top: 20px;
             background: white;  
             border-radius: 15px;
             box-shadow: var(--shadow-lg);
@@ -1116,6 +1194,12 @@
                             <img src="assets/Notifications.svg" class="notifications-img">
                         </button>
                     </div>
+                    <div class="profile-section">
+                        <span class="username-text"></span>
+                        <button class="profile-btn">
+                            <img src="assets/profile-icon.svg" class="profile-img">
+                        </button>
+                    </div>
                     <div class="logout-section">
                         <button class="logout-btn" onclick="logOut()">
                             <img src="assets/logout-icon 2.svg" class="logout-img">
@@ -1162,6 +1246,38 @@
 
             <div class="main-content">
                 
+                <div class="top-section">
+                    <div class="welcome">
+                        <h2 class="welcome-txt">أهلا </h2>
+                    </div>
+                    <div class="filter-by">
+                        <small>تصفية حسب</small>
+                        <br>
+                        <select name="drop-down">
+                            <option value="option1">المحتوى</option>
+                            <option value="option1">التاريخ</option>
+                            <option value="option1">الشاشت</option>
+                            <option value="option1">المرفقات</option>
+                        </select>
+                        
+                        <div class="download-top-section">
+                            <button class="download-btn">
+                                <img src="assets/download-icon.svg" class="download-img">
+                            </button>
+                        </div>
+                    </div>
+                        <div class="top-overview">
+                            <strong class="top-overview-txt">الملخص</strong>
+                                <a onclick="switchTab('analytics')" class="top-overview-more-details"> المزيد</a>
+                                <img src="assets/arrow-icon.svg">
+                        </div>
+                        
+
+
+                    
+                </div>
+
+
 
                 <div class="main-panel">
                     <nav class = "nav-tabs">
@@ -1495,14 +1611,9 @@
         loadThemePreference();
         await initializeApp();
         setupEventListeners();
-        const username = localStorage.getItem('username');
-    if (username) {
-        // Example: set greeting text
-        const greetingElem = document.getElementById('greeting');
-        if (greetingElem) {
-            greetingElem.textContent = `مرحباً، ${username}!`;
-        }
-    }
+        showUsername();
+     
+    
     });
 
     // Dark Mode Functions
@@ -1617,6 +1728,21 @@
         
     }
 
+        function showUsername(){
+            const username = localStorage.getItem('username');
+            if(username){
+                const welcomeElem = document.querySelector('.welcome-txt')
+                if(welcomeElem){
+                    welcomeElem.textContent = `أهلا ،${username}!`;
+                }
+                // const profileElem = document.querySelector('.username-text')
+                // if(profileElem) {
+                //     profileElem.textContent = `${username}`;
+                // }
+            }
+            console.log("Username from localStorage:", username);
+
+        }
    
         function switchTab(tabName) {
     // Remove active from all buttons
