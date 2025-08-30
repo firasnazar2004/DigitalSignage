@@ -177,7 +177,8 @@
             
         }
         .sidebar-content{
-           background: rgb(205, 205, 205, 1);
+           /* background: rgb(205, 205, 205, 1); */
+           background: #F2F2F7; 
            box-shadow: -5px 0 15px -5px rgba(95, 95, 95, 0.2);
            height: 100%;
            
@@ -221,14 +222,16 @@
         }
         
         .nav-home-btn{
-            background-color: rgba(205, 205, 205, 1);
+            /* background-color: rgba(205, 205, 205, 1); */
+            background: #F2F2F7; 
             width: auto;
             font-family: 'Almarai';
             padding: 15px;
             padding-left:110px;
 
             width: 400px;
-            border-color:  rgba(205, 205, 205, 1) ;
+            /* border-color:  rgba(205, 205, 205, 1) ; */
+            border-color:   #F2F2F7; 
             border-style: none;
             border-radius: 21px;
         }
@@ -250,14 +253,16 @@
 
         .nav-devices-btn{
             
-            background-color: rgba(205, 205, 205, 1);
+            /* background-color: rgba(205, 205, 205, 1); */
+            background: #F2F2F7; 
             width: auto;
             font-family: 'Almarai';
             padding: 15px;
             padding-left:110px;
 
             width: 400px;
-            border-color:  rgba(205, 205, 205, 1) ;
+            /* border-color:  rgba(205, 205, 205, 1) ; */
+            border-color:   #F2F2F7; 
             border-style: none;
             border-radius: 21px;
         }
@@ -277,14 +282,16 @@
             }
 
         .nav-analytics-btn{
-            background-color: rgba(205, 205, 205, 1);
+            /* background-color: rgba(205, 205, 205, 1); */
+            background: #F2F2F7; 
             width: auto;
             font-family: 'Almarai';
             padding: 15px;
             padding-left:110px;
 
             width: 400px;
-            border-color:  rgba(205, 205, 205, 1) ;
+            /* border-color:  rgba(205, 205, 205, 1) ; */
+            border-color:   #F2F2F7; 
             border-style: none;
             border-radius: 21px;
         }
@@ -306,14 +313,16 @@
 
 
         .nav-settings-btn{
-            background-color: rgba(205, 205, 205, 1);
+            /* background-color: rgba(205, 205, 205, 1); */
+            background: #F2F2F7; 
             width: auto;
             font-family: 'Almarai';
             padding: 15px;
             padding-left:110px;
 
             width: 400px;
-            border-color:  rgba(205, 205, 205, 1) ;
+            /* border-color:  rgba(205, 205, 205, 1) ; */
+            border-color:   #F2F2F7; 
             border-style: none;
             border-radius: 21px;
         }
@@ -472,7 +481,8 @@
 
 
         .main-content{
-            background-color: rgb(213, 211, 211);
+            /* background-color: rgb(213, 211, 211); */
+            background-color:  #F2F2F7;  
             flex: 1;
             max-width: 1400px;
             height : 100%;
@@ -579,7 +589,7 @@
             box-shadow: 0 0 0 3px rgb(59 130 246 / 0.1);
         }
 
-        .form-input:invalid {
+        .was-validated .form-input:invalid {
             border-color: var(--error-color);
         }
 
@@ -1122,7 +1132,7 @@
                     <ul class="sidebar-list">
                         <nav class="home-nav">
                             <li  class= "sidebar-home">
-                                <button class="nav-home-btn">
+                                <button class="nav-home-btn" onclick="switchTab('register')">
                                     <img src="data:image/svg+xml,%3csvg%20width='26'%20height='32'%20viewBox='0%200%2026%2032'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20d='M6.25%2020.2188H13.75M9.42048%208.67598L2.92048%2013.0717C2.65668%2013.2501%202.5%2013.5389%202.5%2013.8467V22.0735C2.5%2022.8613%203.17157%2023.5%204%2023.5H16C16.8284%2023.5%2017.5%2022.8613%2017.5%2022.0735V13.8467C17.5%2013.5389%2017.3433%2013.2501%2017.0795%2013.0717L10.5795%208.67598C10.2326%208.44134%209.76744%208.44134%209.42048%208.67598Z'%20stroke='black'%20stroke-width='1.25'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3c/svg%3e" alt="nav.home" class="home-logo">
                                     <span class="home-text">الرئيسية</span>
                                 </button>
@@ -1485,6 +1495,14 @@
         loadThemePreference();
         await initializeApp();
         setupEventListeners();
+        const username = localStorage.getItem('username');
+    if (username) {
+        // Example: set greeting text
+        const greetingElem = document.getElementById('greeting');
+        if (greetingElem) {
+            greetingElem.textContent = `مرحباً، ${username}!`;
+        }
+    }
     });
 
     // Dark Mode Functions
@@ -1623,7 +1641,8 @@
     // Display Registration
     async function handleDisplayRegistration(event) {
         event.preventDefault();
-        
+        const form = event.target;
+        form.classList.add('was-validated');
         const formData = new FormData(event.target);
         const registrationData = {
             name: formData.get('name').trim(),
