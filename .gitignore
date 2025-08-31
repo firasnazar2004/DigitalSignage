@@ -7,4 +7,7 @@
 !/firmware/smartTV/digital_signage_app/lib/main.dart
 !/firmware/smartTV/digital_signage_app/pubspec.yaml.DS_Store
 /frontend/assets/*
+/firmware/raspberrypi/setup_page/assets/
+/firmware/raspberrypi/setup_page/setup.json
+/firmware/raspberrypi/setup_page/__pycache__/
 **/.env
