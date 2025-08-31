@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ar" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dhaher Setup</title>
+
+    <style>
+        
+        .main-wraper{
+            background-color: #eaebee;
+
+        }
+        header{
+            direction: rtl;
+            background-color: #eaebee;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="main-wrapper">
+        <header class="page-header">
+            <div class = "logo-section">
+                    <img src = "/firmware/raspberrypi/setup_page/assets/logoBlack.svg" alt="Dhaher" class ="logo-img">
+                </div>
+        </header>
+        <div class="main-panel">
+            <div class="forms-section">
+                <span>Display_Uuid:</span>
+                <input class="forms-input" id="uuid-input">
+                <br>
+                <span>API Key:</span>
+                <input class="forms-input" id="api-input">
+                <br>
+                <span>Server Link:</span> 
+                <input class="forms-input" id="server-input">
+                <br>
+                <span>Display Sync Interval (seconds):</span>
+                <input class="forms-input" id="interval-input">
+                <button onclick="setupJSONfile()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function setupJSONfile() {
+            const data = {
+                display_uuid: document.getElementById('uuid-input').value,
+                api_key: document.getElementById('api-input').value,
+                backend_base_url: document.getElementById('server-input').value,
+                status_check_interval_seconds: parseInt(document.getElementById('interval-input').value)
+            };
+
+            fetch('http://localhost:8000/update-setup-json', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Configuration saved!');
+                } else {
+                    alert('Failed to save configuration.');
+                }
+            });
+         }
+
+    </script>
+</body>
+</html>
