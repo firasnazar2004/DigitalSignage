@@ -16,6 +16,11 @@
             background-color: #eaebee;
         }
 
+
+
+        input{
+            width: 300px;
+        }
     </style>
 </head>
 <body>
@@ -36,6 +41,9 @@
                 <span>Server Link:</span> 
                 <input class="forms-input" id="server-input">
                 <br>
+                <span>Media Download File:</span> 
+                <input class="forms-input" id="folder-input"  value="/home/rasberrybi2/MST/DigitalSignageProject/DigitalSignage/Media">
+                <br>
                 <span>Display Sync Interval (seconds):</span>
                 <input class="forms-input" id="interval-input">
                 <button onclick="setupJSONfile()">Save</button>
@@ -49,6 +57,7 @@
                 display_uuid: document.getElementById('uuid-input').value,
                 api_key: document.getElementById('api-input').value,
                 backend_base_url: document.getElementById('server-input').value,
+                media_storage_path: document.getElementById('folder-input').value,
                 status_check_interval_seconds: parseInt(document.getElementById('interval-input').value)
             };
 
