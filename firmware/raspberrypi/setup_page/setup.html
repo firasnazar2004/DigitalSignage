@@ -227,33 +227,35 @@
         <div class="main-panel">
              <div class="forms-panel">
                 <div class="forms-section">
-                    <div class="forms-entry">
-                        <span>Display_Uuid:</span>
-                        <input class="forms-input" id="uuid-input">
-                    </div>
-                    <br>
-                    <div class="forms-entry">
-                        <span>API Key:</span>
-                        <input class="forms-input" id="api-input">
-                    </div>
-                    <br>
-                    <div class="forms-entry">
-                        <span>Server Link:</span> 
-                        <input class="forms-input" id="server-input">
-                    </div>
-                    <br>
-                    <div class="forms-entry">
-                        <span>Media Download File:</span> 
-                        <input class="forms-input" id="folder-input"  value="/home/rasberrybi2/MST/DigitalSignageProject/DigitalSignage/Media">
-                    </div>
-                    <br>
-                    <div class="forms-entry">
-                        <span>Display Sync Interval (s):</span>
-                        <input class="forms-input" id="interval-input">
-                    </div>
-                    <div class="save-container">
-                        <button  class='save-btn'onclick="setupJSONfile()">Save</button>
-                    </div>
+                    <form>
+                        <div class="forms-entry">
+                            <span>Display_Uuid:</span>
+                            <input class="forms-input" id="uuid-input" required>
+                        </div>
+                        <br>
+                        <div class="forms-entry">
+                            <span>API Key:</span>
+                            <input class="forms-input" id="api-input" required>
+                        </div>
+                        <br>
+                        <div class="forms-entry">
+                            <span>Server Link:</span> 
+                            <input class="forms-input" id="server-input" required>
+                        </div>
+                        <br>
+                        <div class="forms-entry">
+                            <span>Media Download File:</span> 
+                            <input class="forms-input" id="folder-input"  value="/home/rasberrybi2/MST/DigitalSignageProject/DigitalSignage/Media" required>
+                        </div>
+                        <br>
+                        <div class="forms-entry">
+                            <span>Display Sync Interval (s):</span>
+                            <input class="forms-input" id="interval-input" >
+                        </div>
+                        <div class="save-container">
+                            <button  class='save-btn'onclick="setupJSONfile()">Save</button>
+                        </div>
+                    </form>
             </div>
         </div>       
         </div>
