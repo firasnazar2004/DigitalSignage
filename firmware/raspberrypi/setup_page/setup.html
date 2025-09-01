@@ -227,7 +227,7 @@
         <div class="main-panel">
              <div class="forms-panel">
                 <div class="forms-section">
-                    <form>
+                    <form id="setup-form">
                         <div class="forms-entry">
                             <span>Display_Uuid:</span>
                             <input class="forms-input" id="uuid-input" required>
@@ -253,7 +253,7 @@
                             <input class="forms-input" id="interval-input" >
                         </div>
                         <div class="save-container">
-                            <button  class='save-btn'onclick="setupJSONfile()">Save</button>
+                            <button type="submit" class='save-btn'onclick="setupJSONfile()">Save</button>
                         </div>
                     </form>
             </div>
@@ -263,7 +263,10 @@
     </div>
 
     <script>
-        function setupJSONfile() {
+        const form = document.getElementById('setup-form')
+        form.addEventListener('submit',
+        function setupJSONfile(event) {
+            event.preventDefault()
             const data = {
                 display_uuid: document.getElementById('uuid-input').value,
                 api_key: document.getElementById('api-input').value,
@@ -271,6 +274,12 @@
                 media_storage_path: document.getElementById('folder-input').value,
                 status_check_interval_seconds: parseInt(document.getElementById('interval-input').value)
             };
+
+
+            if (!data.display_uuid || !data.api_key || !data.backend_base_url || !data.media_storage_path || !data.status_check_interval_seconds) {
+                form.reportValidity();
+                return;
+            }
 
             fetch('http://localhost:8000/update-setup-json', {
                 method: 'POST',
@@ -284,7 +293,7 @@
                     alert('Failed to save configuration.');
                 }
             });
-         }
+        });
 
     </script>
 </body>
