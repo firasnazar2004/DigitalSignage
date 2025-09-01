@@ -3,52 +3,261 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&display=swap" rel="stylesheet">
     <title>Dhaher Setup</title>
 
     <style>
-        
+        :root {
+            --primary-color: #1e40af;
+            --primary-light: #3b82f6;
+            --primary-dark: #1e3a8a;
+            --secondary-color: #64748b;
+            --success-color: #059669;
+            --warning-color: #d97706;
+            --error-color: #dc2626;
+            --neutral-50: #f8fafc;
+            --neutral-100: #f1f5f9;
+            --neutral-200: #e2e8f0;
+            --neutral-300: #cbd5e1;
+            --neutral-400: #94a3b8;
+            --neutral-500: #64748b;
+            --neutral-600: #475569;
+            --neutral-700: #334155;
+            --neutral-800: #1e293b;
+            --neutral-900: #0f172a;
+            --border-radius: 12px;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+        .almarai-light {
+            font-family: "Almarai", sans-serif;
+            font-weight: 300;
+            font-style: normal;
+            }
+
+            .almarai-regular {
+            font-family: "Almarai", sans-serif;
+            font-weight: 400;
+            font-style: normal;
+            }
+
+            .almarai-bold {
+            font-family: "Almarai", sans-serif;
+            font-weight: 700;
+            font-style: normal;
+            }
+
+            .almarai-extrabold {
+            font-family: "Almarai", sans-serif;
+            font-weight: 800;
+            font-style: normal;
+            }
+        body{
+            
+            font-family: 'Almarai';
+
+        }
         .main-wraper{
             background-color: #eaebee;
 
         }
-        header{
+        
+
+       /* Header Section*/
+        header {
+            background: rgb(17,24,39) ;
+            border-bottom: 1px solid var(--neutral-200);
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
             direction: rtl;
-            background-color: #eaebee;
+            height: 90px;
+
+            border-radius: 10px;
+        }
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
 
 
+
+        /* Logo Section */
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .logo-img {
+            width: 180px;
+            height: auto;
+            object-fit: contain;
+           
+            box-shadow: var(--shadow-md);
+        }
+
+        
+        /* Logout Section */
+        .logout-btn{
+            border: none;         
+            background: none;      
+            padding: 0;            
+            margin: 0;             
+            cursor: pointer;       
+            outline: none; 
+        }
+
+        .logout-btn:hover .logout-img {
+            opacity: 0.8;
+            transform: scale(1.05);
+        }
+
+        /* Main Panel */
+        .main-panel {
+  
+            border-radius: 15px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--neutral-200);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            padding: 200px;
+        }
+
+
+        /* Forms Section */
+        span{
+            font-size: larger;
+        }
+        .forms-panel{
+            
+            background: rgb(236, 235, 235);
+            border-radius: 15px;
+            padding: 10px;
+        
+        }
+        .forms-section{
+            padding: 15px;
+        }
+        .forms-input{
+            flex:1;
+            padding:10px;
+            border-radius: 7px;
+            width: 100%;
+            max-width: 400px;
+        }
+        .forms-entry{
+            padding: 8px 0;
+            display:flex; 
+            align-items: center;
+            margin-bottom: 12px;
+            gap:12px;
+        }
+        .forms-entry span{
+            min-width: 220px;
+            text-align: right;
+        }
+        .save-container{
+            text-align: right;
+        }
+        .save-btn
+        {
+            
+            font-family: 'Almarai';
+            background: black;
+            color:white;
+            padding: 10px;
+            padding-left: 15px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            /* outline: none; */
+            min-height: 48px;
+            direction: ltr;
+        }
+        .save-btn:hover
+        {
+            opacity: 0.8;
+            transform: scale(1.05);
+        }
         input{
-            width: 300px;
+            width: 400px;
         }
     </style>
 </head>
 <body>
     <div class="main-wrapper">
-        <header class="page-header">
-            <div class = "logo-section">
-                    <img src = "/firmware/raspberrypi/setup_page/assets/logoBlack.svg" alt="Dhaher" class ="logo-img">
+        <header class="header">
+            <div class ="header-content">
+                <div class = "logo-section">
+                    <img src = "assets/Logo Option 4 (Arabic).svg" alt="Dhaher" class ="logo-img">
                 </div>
+                
+                <div class="user-section">
+                    <div class="logout-section">
+                        <button class="logout-btn" onclick="logOut()">
+                            <img src="assets/logout-icon 2.svg" class="logout-img">
+                        </button> 
+                    </div>  
+                </div>
+            </div>
+
         </header>
         <div class="main-panel">
-            <div class="forms-section">
-                <span>Display_Uuid:</span>
-                <input class="forms-input" id="uuid-input">
-                <br>
-                <span>API Key:</span>
-                <input class="forms-input" id="api-input">
-                <br>
-                <span>Server Link:</span> 
-                <input class="forms-input" id="server-input">
-                <br>
-                <span>Media Download File:</span> 
-                <input class="forms-input" id="folder-input"  value="/home/rasberrybi2/MST/DigitalSignageProject/DigitalSignage/Media">
-                <br>
-                <span>Display Sync Interval (seconds):</span>
-                <input class="forms-input" id="interval-input">
-                <button onclick="setupJSONfile()">Save</button>
+             <div class="forms-panel">
+                <div class="forms-section">
+                    <div class="forms-entry">
+                        <span>Display_Uuid:</span>
+                        <input class="forms-input" id="uuid-input">
+                    </div>
+                    <br>
+                    <div class="forms-entry">
+                        <span>API Key:</span>
+                        <input class="forms-input" id="api-input">
+                    </div>
+                    <br>
+                    <div class="forms-entry">
+                        <span>Server Link:</span> 
+                        <input class="forms-input" id="server-input">
+                    </div>
+                    <br>
+                    <div class="forms-entry">
+                        <span>Media Download File:</span> 
+                        <input class="forms-input" id="folder-input"  value="/home/rasberrybi2/MST/DigitalSignageProject/DigitalSignage/Media">
+                    </div>
+                    <br>
+                    <div class="forms-entry">
+                        <span>Display Sync Interval (s):</span>
+                        <input class="forms-input" id="interval-input">
+                    </div>
+                    <div class="save-container">
+                        <button  class='save-btn'onclick="setupJSONfile()">Save</button>
+                    </div>
             </div>
+        </div>       
         </div>
+        
     </div>
 
     <script>
