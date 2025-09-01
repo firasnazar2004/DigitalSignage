@@ -176,7 +176,7 @@
         {
             
             font-family: 'Almarai';
-            background: black;
+            background: rgb(17,24,39) ;
             color:white;
             padding: 10px;
             padding-left: 15px;
@@ -249,7 +249,7 @@
                         </div>
                         <br>
                         <div class="forms-entry">
-                            <span>Display Sync Interval (s):</span>
+                            <span>Display Sync Interval (sec):</span>
                             <input class="forms-input" id="interval-input" >
                         </div>
                         <div class="save-container">
@@ -295,6 +295,11 @@
             });
         });
 
+        function logOut(){
+            setTimeout(() => {
+                    window.location.href = 'setup-login.html';
+                }, 850);
+        }
     </script>
 </body>
 </html>
