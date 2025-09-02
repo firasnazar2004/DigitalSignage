@@ -63,8 +63,9 @@ This system integrates **five major components**:
 │   ├── digital-signage.service# systemd service for auto-start
 │   └── reboot-slideshow-instructions.txt # Setup instructions
 ├── frontend/
-│   └── index.html              # UI for uploading media and registering displays
-
+│   └── dhaher.html
+│   └── login.html
+              
 ---
 
 ## 🔌 Planned APIs
