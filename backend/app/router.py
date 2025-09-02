@@ -1,5 +1,5 @@
 from fastapi import APIRouter, UploadFile, File, HTTPException, Request, Depends, status, Form
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, JSONResponse , RedirectResponse
 import os
 import json
 from uuid import uuid4, UUID
@@ -15,11 +15,13 @@ import hashlib
 from . import storage
 from fastapi.security import OAuth2PasswordBearer , OAuth2PasswordRequestForm
 from jose import JWTError, jwt 
+from fastapi.staticfiles import StaticFiles
 
 api_key_header = APIKeyHeader(name="X-API-KEY", auto_error=False)
 SECRET_KEY = "402511c7e38c4ebd1812a20af2c8c3a618bfe2037d50446db1f0dedac3e8e06d"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30 
+
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 # ---------------- Models ----------------
@@ -65,6 +67,7 @@ STORAGE_PATH = os.path.join(STORAGE_BASE_DIR, "media")
 
 router = APIRouter()
 
+
 # ---------------- Dependencies ----------------
 async def get_display_by_api_key(api_key: str = Depends(api_key_header), session: Session = Depends(get_session)):
     if not api_key:
@@ -107,9 +110,10 @@ def get_current_user(token: Annotated[str, Depends(oauth2_scheme)] , session: Se
     return user
 
 # ---------------- Endpoints ----------------
-@router.get('/')
+@router.get('/') 
 def root():
-    return {"message": "Digital Signage", "status": "running"}
+    # return RedirectResponse(url="/static/login.html")
+    return {"status":"Service Running"}
 
 @router.post("/register")
 async def register_display(display_data: RegisterDisplayRequest, session: Session = Depends(get_session)):
@@ -292,38 +296,6 @@ async def upload_media(
 async def media_to_delete():
     pass
 
-# ---------------- Display Media Endpoints ----------------
-# @router.get('/displays/{uuid}/media')
-# async def get_display_media(current_user: Annotated[User, Depends(get_current_user)], uuid: UUID, session: Session = Depends(get_session), display: Display = Depends(get_display_by_api_key)):
-#     if display.uuid != uuid:
-#         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid API Key for this display UUID")
-#     display_playlist = session.exec(
-#         select(DisplayPlaylist).where(col(DisplayPlaylist.display_uuid) == uuid)
-#     ).first()
-#     if not display_playlist:
-#         raise HTTPException(status_code=404, detail=f"Playlist for display {uuid} not found.")
-#     playlist_links = session.exec(
-#         select(PlaylistMediaLink)
-#         .where(col(PlaylistMediaLink.display_playlist_id) == display_playlist.id)
-#         .order_by(PlaylistMediaLink.order)
-#     ).all()
-#     if not playlist_links:
-#         raise HTTPException(status_code=404, detail=f"Playlist for display {uuid} is empty.")
-#     current_index = display_playlist.current_index
-#     if current_index >= len(playlist_links):
-#         current_index = 0
-#     media_link = playlist_links[current_index]
-#     media_item = session.exec(select(Media).where(col(Media.id) == media_link.media_id)).first()
-#     if not media_item or not os.path.exists(media_item.filepath_on_disk):
-#         raise HTTPException(status_code=404, detail=f"Assigned media (ID: {media_link.media_id}) not found or file missing.")
-#     display_playlist.current_index = (current_index + 1) % len(playlist_links)
-#     session.add(display_playlist)
-#     session.commit()
-#     response = FileResponse(
-#         media_item.filepath_on_disk,
-#         media_type=media_item.content_type,
-#     )
-#     return response
 
 
 @router.get('/displays/{uuid}/status')

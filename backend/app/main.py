@@ -1,5 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import RedirectResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
+
 from contextlib import asynccontextmanager
 import uvicorn
 from backend.app.router import router
@@ -49,6 +52,9 @@ app.add_middleware(
 )
 
 app.include_router(router)
+
+frontend_path = os.path.join(os.path.dirname(__file__), "..", "..", "frontend")
+app.mount("/static", StaticFiles(directory=frontend_path), name="static")
 
 @app.get("/")
 def read_root_status():
