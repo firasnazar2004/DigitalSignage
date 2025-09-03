@@ -147,12 +147,13 @@
         <header class="header">
             <div class ="header-content">
                 <div class = "logo-section">
-                    <img src = "assets/Logo Option 4 (Arabic).svg" alt="Dhaher" class ="logo-img">
+                    <img src="/setup-static/assets/Logo Option 4 (Arabic).svg" alt="Dhaher" class="logo-img">
                 </div>
                 
             </div>
 
         </header>
+        <div id="access-message" style="padding: 10px; font-size: 1rem; color: #1e40af;"></div>
         <div class="main-panel">
             <h1>Sign In</h1>
              <div class="forms-panel">
@@ -201,6 +202,30 @@
                 successDiv.style.display = 'none';
             }, 5000);
         }
+        const accessMessageDiv = document.getElementById('access-message');
+
+async function getLocalIP() {
+    try {
+        const response = await fetch('/api/get-ip');
+        if (!response.ok) throw new Error('Network response was not ok');
+        const data = await response.json();
+        return data.ip;
+    } catch (error) {
+        accessMessageDiv.textContent = "Could not fetch local IP.";
+        return null;
+    }
+}
+
+getLocalIP().then(ip => {
+    if (ip) {
+        const port = window.location.port ? `:${window.location.port}` : '';
+        accessMessageDiv.innerHTML = 
+            `You can access this page at: 
+             <a href="http://${ip}${port}/setup-login">
+               http://${ip}${port}/setup-login
+             </a>`;
+    }
+});
 
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
         e.preventDefault();
@@ -209,16 +234,14 @@
         const username = document.getElementById('username').value.trim();
         const password = document.getElementById('password').value;
         
-        if (username !=adminUsername || password!=adminUsername) {
-            showMessage('Incorrect Password', 'error');
-            return;
-        }
-        else {
-            setTimeout(() => {
-                    window.location.href = 'setup.html';
-                }, 850);
-        }
-
+        if (username !== adminUsername || password !== adminPassword) {
+    showMessage('Incorrect Password', 'error');
+    return;
+} else {
+    setTimeout(() => {
+        window.location.href = '/setup.html';
+    }, 850);
+}
     })
 
     </script>
