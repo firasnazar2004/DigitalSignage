@@ -666,7 +666,9 @@
             border-color: var(--primary-color);
             box-shadow: 0 0 0 3px rgb(59 130 246 / 0.1);
         }
-
+        #location-select-options{
+            width: 300px;
+        }
         .was-validated .form-input:invalid {
             border-color: var(--error-color);
         }
@@ -1457,7 +1459,7 @@
                                                 <i class="fas fa-map-marker-alt"></i>
                                                 إختيار الموقع
                                             </label>
-                                            <select id="location-select" class="form-select" required>
+                                            <select id="location-select" class="form-select" id="location-select-options" required>
                                                 <option value="">...جاري عرض المواقع المتاحة</option>
                                             </select>
                                             <div class="form-help">قم بإختيار الموقع المطلوب</div>
