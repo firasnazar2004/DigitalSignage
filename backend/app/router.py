@@ -416,7 +416,7 @@ async def number_of_locations(session: Session=Depends(get_session)):
 
 @router.get('/analytics/number_of_media_files')
 async def number_of_media_files(session: Session=Depends(get_session)):
-    fileNumber = session.exec(select(func.count(func.distinct(Media.sha256_hash)))).first()
+    fileNumber = session.exec(select(func.count(func.distinct(PlaylistMediaLink.media_id)))).first()
     return {"number_of_media_files":fileNumber}
 
 @router.get('/analytics/number_of_active_displays')
