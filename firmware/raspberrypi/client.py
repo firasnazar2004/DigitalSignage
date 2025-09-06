@@ -108,7 +108,7 @@ def get_local_media_paths():
     return media_paths
 
 def start_mpv_playlist():
-    """Starts mpv with all locally stored media files and new options."""
+    """Starts mpv with all locally stored media files and new options"""
     global mpv_process
     media_paths = get_local_media_paths()
 
