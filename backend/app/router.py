@@ -54,6 +54,19 @@ class BulkMarkDownloadedRequest(BaseModel):
     media_ids : List[UUID]
 
 
+class MediaResponse(BaseModel): 
+    id: UUID
+    original_filename: str
+    filepath_on_disk: str
+    content_type: str
+    media_type: str
+    size: int
+    sha256_hash: str
+    upload_timestamp: datetime
+    class Config:
+        orm_mode = True
+        extra = "ignore"
+
 
 
 # ---------------- Storage & Allowed MIME ----------------
@@ -64,6 +77,16 @@ ALLOWED_MIME_TYPES = {
     "video/mp4", "video/webm", "video/ogg", "video/x-msvideo"
 }
 STORAGE_PATH = os.path.join(STORAGE_BASE_DIR, "media")
+
+
+def get_all_storage_media_file_paths():
+    return [
+        os.path.join(STORAGE_PATH, filename)
+        for filename in os.listdir(STORAGE_PATH)
+        if os.path.isfile(os.path.join(STORAGE_PATH, filename))
+    ]
+
+
 
 router = APIRouter()
 
@@ -392,7 +415,7 @@ async def mark_downloaded_bulk(uuid: UUID, request_data: BulkMarkDownloadedReque
     session.commit()
     return {"message" : f"{updated_count} media items marked as downloaded"}
 
-# ---------------- Get Specific Media ----------------
+# ---------------- Get Media ----------------
 @router.get('/media/{media_id}')
 async def get_specific_media(media_id: UUID, session: Session = Depends(get_session)):
     media_item = session.exec(select(Media).where(col(Media.id) == media_id)).first()
@@ -401,6 +424,10 @@ async def get_specific_media(media_id: UUID, session: Session = Depends(get_sess
 
     return FileResponse(media_item.filepath_on_disk, media_type= media_item.content_type)
 
+
+
+    
+    
 
 # ----------------- Analytics Section -------------------
 @router.get('/analytics/number_of_displays')
@@ -425,3 +452,21 @@ async def number_of_active_displays(session: Session = Depends(get_session)):
     threshold = current_time - timedelta(seconds=330)
     active_displays = session.exec(select (func.count(Display.uuid)).where(Display.last_active > threshold)).first()
     return {'number_of_active_displays':active_displays}
+
+
+
+
+# ----------------- Storage Management Section -------------------
+@router.get('/storage/all_media' )
+async def get_all_storage_media(session: Session = Depends(get_session)):
+    files_in_storage = get_all_storage_media_file_paths()
+    return {"all_media_in_storage": files_in_storage}
+
+@router.delete('/storage/delete_all')
+async def delete_all_storage_media(session: Session = Depends(get_session)):
+    files_in_storage = get_all_storage_media_file_paths()
+    for file_path in files_in_storage:
+        os.remove(file_path)
+    
+    counter_media_files = len(get_all_storage_media_file_paths())
+    return {"number of files remaining" : counter_media_files}
