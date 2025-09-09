@@ -10,6 +10,7 @@
 /frontend/assets/*
 !/frontend/assets/logo-black.png
 !/frontend/assets/logo-white.svg
+!/frontend/assets/logo-white-eng.svg
 /firmware/raspberrypi/setup_page/assets/
 **/setup.json
 /firmware/raspberrypi/setup_page/__pycache__/
