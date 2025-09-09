@@ -1,11 +1,10 @@
 # Digital Signage Management System  
 
-  
+<img src= "frontend/assets/logo-white.svg" style="float: right;" width="150">
 ![Logo](frontend/assets/logo-white.svg)
 
 [![Python](https://img.shields.io/badge/Python-3.9%2B-blue.svg)](https://www.python.org/)  
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-green.svg)](https://fastapi.tiangolo.com/)  
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)  
 
 
 A cloud-connected platform for managing digital signage content across multiple displays. Designed for scalability, flexibility, and compatibility with both smart TVs and non-smart displays powered by Raspberry Pi.  
