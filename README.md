@@ -1,15 +1,15 @@
 # Digital Signage Management System  
 
 
-<picture>
+<picture >
   <!-- Light mode -->
-  <source srcset="frontend/assets/logo-black.png" media="(prefers-color-scheme: light)">
+  <source srcset="frontend/assets/logo-black.png" media="(prefers-color-scheme: light)" >
   
   <!-- Dark mode -->
-  <source srcset="frontend/assets/Logo Option 4 (Arabic).svg" media="(prefers-color-scheme: dark)">
+  <source srcset="frontend/assets/logo-white.svg" media="(prefers-color-scheme: dark)">
   
   <!-- Fallback -->
-  <img src="frontend/assets/logo-black.png" alt="Logo" width="200">
+  <img src="frontend/assets/logo-black.png" alt="Logo" width="150" align="right" >
 </picture>
 
 [![Python](https://img.shields.io/badge/Python-3.9%2B-blue.svg)](https://www.python.org/)  
