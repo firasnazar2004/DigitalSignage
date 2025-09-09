@@ -9,6 +9,7 @@
 !/firmware/smartTV/digital_signage_app/pubspec.yaml.DS_Store
 /frontend/assets/*
 !/frontend/assets/logo-black.png
+!/frontend/assets/Logo Option 4 (Arabic).svg
 /firmware/raspberrypi/setup_page/assets/
 **/setup.json
 /firmware/raspberrypi/setup_page/__pycache__/
