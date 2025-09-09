@@ -1,7 +1,7 @@
 # Digital Signage Management System  
 
-<img src= "frontend/assets/logo-white.svg" style="float: right;" width="150">
-![Logo](frontend/assets/logo-white.svg)
+<img src= "frontend/assets/logo-white.svg" style="align: right;" width="150">
+
 
 [![Python](https://img.shields.io/badge/Python-3.9%2B-blue.svg)](https://www.python.org/)  
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-green.svg)](https://fastapi.tiangolo.com/)  
