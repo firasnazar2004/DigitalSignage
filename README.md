@@ -1,8 +1,8 @@
 # Digital Signage Management System  
 
   
-  <source srcset="frontend/assets/logo-white.svg" >
-  
+![Logo](frontend/assets/logo-white.svg)
+
 [![Python](https://img.shields.io/badge/Python-3.9%2B-blue.svg)](https://www.python.org/)  
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-green.svg)](https://fastapi.tiangolo.com/)  
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)  
