@@ -1,17 +1,8 @@
 # Digital Signage Management System  
 
-
-<picture >
-  <!-- Light mode -->
-  <source srcset="frontend/assets/logo-black.png" media="(prefers-color-scheme: light)" >
   
-  <!-- Dark mode -->
-  <source srcset="frontend/assets/logo-white.svg" media="(prefers-color-scheme: dark)">
+  <source srcset="frontend/assets/logo-white.svg" >
   
-  <!-- Fallback -->
-  <img src="frontend/assets/logo-black.png" alt="Logo" width="150" align="right" >
-</picture>
-
 [![Python](https://img.shields.io/badge/Python-3.9%2B-blue.svg)](https://www.python.org/)  
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-green.svg)](https://fastapi.tiangolo.com/)  
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)  
