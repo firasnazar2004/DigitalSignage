@@ -15,3 +15,4 @@
 **/setup.json
 /firmware/raspberrypi/setup_page/__pycache__/
 **/.env
+/frontend/testing/*
