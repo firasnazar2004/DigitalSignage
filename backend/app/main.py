@@ -4,7 +4,9 @@ from fastapi.responses import RedirectResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from contextlib import asynccontextmanager
+import webbrowser
 import uvicorn
+import threading
 from backend.app.router import router
 from backend.app.db import create_db_and_tables
 from fastapi.security import APIKeyHeader
@@ -20,7 +22,8 @@ async def lifespan(app:FastAPI):
     print("Starting Digital Signage ..")
     STORAGE_BASE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "storage")
     os.makedirs(os.path.join(STORAGE_BASE_DIR, "media"), exist_ok=True)
-    create_db_and_tables()  
+    create_db_and_tables()
+    threading.Timer(1, lambda: webbrowser.open("http://127.0.0.1:5500/frontend/login.html")).start()  
     yield
     print("Shutting down system")
 
@@ -59,3 +62,4 @@ app.mount("/static", StaticFiles(directory=frontend_path), name="static")
 @app.get("/")
 def read_root_status():
     return {"message" : "Digital Signage Project up and running"}
+
