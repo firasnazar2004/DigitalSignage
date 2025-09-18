@@ -108,11 +108,13 @@ Each display authenticates using its unique API key. Admin routes for frontend u
 git clone https://github.com/firasnazar2004/digital-signage-system.git
 
 # Backend setup
-cd backend
-python3 -m venv ../.venv
-source ../.venv/bin/activate
-pip install -r requirements.txt
-uvicorn app.main:app --reload
+cd backend 
+python3 -m venv ../.venv #make venv inside backend
+source ../.venv/bin/activate #activate venv 
+pip install -r requirements.txt #install requirements
+cd .. #go back to root of repo DigitalSignage/ 
+
+uvicorn backend.app.main:app --host 0.0.0.0 --reload #runs backend service and automatically opens frontend page
 
 # Firmware (on Raspberry Pi)
 cd firmware
