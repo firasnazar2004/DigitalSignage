@@ -135,8 +135,7 @@ def get_current_user(token: Annotated[str, Depends(oauth2_scheme)] , session: Se
 # ---------------- Endpoints ----------------
 @router.get('/') 
 def root():
-    # return RedirectResponse(url="/static/login.html")
-    return {"status":"Service Running"}
+     return RedirectResponse(url="/static/login.html")
 
 @router.post("/register")
 async def register_display(display_data: RegisterDisplayRequest, session: Session = Depends(get_session)):
