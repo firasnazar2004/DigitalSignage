@@ -1643,11 +1643,11 @@
     
 
     async function initializeApp() {
+        
         try {
             const response = await fetch(`${API_BASE_URL}/`);
             if (response.ok) {
-                const data = await response.json();
-                console.log('Backend connection established:', data);
+                console.log('Backend connection established');
                 updateConnectionStatus('connected', 'Connected');
                 await loadAnalyticsData();
             } else {
