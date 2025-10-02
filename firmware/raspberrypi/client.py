@@ -32,7 +32,7 @@ STATUS_CHECK_INTERVAL = config['status_check_interval_seconds']
 
 
 last_backend_update_timestamp = None
-mpv_process = None # To hold the mpv subprocess
+mpv_process = None 
 
 # --- API Interaction Functions ---
 def get_new_media():
@@ -86,12 +86,12 @@ def mark_media_downloaded_on_backend(media_ids):
     """Marks a media item as downloaded on the backend using the bulk endpoint."""
     url = f"{BACKEND_BASE_URL}/displays/{DISPLAY_UUID}/mark_downloaded_bulk"
     headers = {"X-API-KEY": API_KEY, "Content-Type": "application/json"}
-    # MODIFIED: PASS A LIST OF IDS, NOT A SINGLE ONE
+
     payload = {"media_ids": media_ids}
     try:
         response = requests.post(url, headers=headers, json=payload, timeout=10)
         response.raise_for_status()
-        # MODIFIED: PRINT THE NUMBER OF ITEMS MARKED
+
         print(f"Successfully marked {len(media_ids)} media items as downloaded on backend.")
     except requests.exceptions.RequestException as e:
         print(f"Error marking media as downloaded: {e}")
@@ -100,7 +100,7 @@ def mark_media_downloaded_on_backend(media_ids):
 def get_local_media_paths():
     """Builds a list of all media files currently in the local directory."""
     media_paths = []
-    # Use a sorted list for consistent playback order
+
     for filename in sorted(os.listdir(MEDIA_STORAGE_PATH)):
         filepath = os.path.join(MEDIA_STORAGE_PATH, filename)
         if os.path.isfile(filepath):
@@ -117,7 +117,7 @@ def start_mpv_playlist():
         stop_mpv()
         return
 
-    # Updated mpv command with the requested flags
+
     mpv_command = [
         "mpv",
         "--image-display-duration=3",
@@ -128,7 +128,7 @@ def start_mpv_playlist():
         "--vo=gpu",
     ] + media_paths
 
-    # Existing logic to handle a running mpv process
+
     if mpv_process and mpv_process.poll() is None:
         print("mpv is already running. Stopping to reload playlist...")
         stop_mpv()
@@ -158,7 +158,7 @@ def stop_mpv():
         print("mpv stopped.")
 
 # --- Main Logic ---
-# MODIFIED: REWORKED MAIN LOOP TO HANDLE OVERRIDE LOGIC
+
 def main_loop():
     time.sleep(5)
     print("Digital Signage Client Starting...")
@@ -175,7 +175,7 @@ def main_loop():
             print(f"Found {len(new_media)} new media items to download.")
             downloaded_ids = []
 
-            # ADDED: CHECK FOR OVERRIDE FLAG FROM THE BACKEND RESPONSE
+
             override_flag = any(item.get("override", False) for item in new_media)
             if override_flag:
                 print("Override=True → clearing media folder before download...")
@@ -188,10 +188,10 @@ def main_loop():
                 print(f"Downloading new media: {original_filename}")
                 filepath = download_media(media_id_str, original_filename)
                 if filepath:
-                    downloaded_ids.append(media_id_str) # ADDED: APPEND TO A LIST
+                    downloaded_ids.append(media_id_str) 
 
             if downloaded_ids:
-                # MODIFIED: PASS THE LIST OF DOWNLOADED IDS TO THE BULK ENDPOINT
+
                 mark_media_downloaded_on_backend(downloaded_ids)
                 print("Finished downloading new media. Restarting mpv with updated playlist.")
                 start_mpv_playlist()
