@@ -80,7 +80,7 @@ urllib3            2.5.0
 
 ## Digital-Signage.service
 
-Service that runs start-slideshow.sh shown above, provided that the condition of .first_time.txt file not being present is true. The .first_time is a simple, empty file that the system checks for each time during booting; if the file exists, then the setup-digital-signange.service (in the next section) is started, if not then this service is started.
+Service that runs start-slideshow.sh shown above, provided that the condition of .first_time file not being present is true. The .first_time is a simple, empty file that the system checks for each time during booting; if the file exists, then the setup-digital-signange.service (in the next section) is started, if not then this service is started.
 
 ```bash
 [Unit]
