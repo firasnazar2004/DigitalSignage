@@ -1,6 +1,7 @@
+<img src= "frontend/assets/logo-white-eng.svg" style="align: right;" width="250">
 # Digital Signage Management System  
 
-<img src= "frontend/assets/logo-white-eng.svg" style="align: right;" width="250">
+
 
 
 [![Python](https://img.shields.io/badge/Python-3.9%2B-blue.svg)](https://www.python.org/)  
